@@ -10,24 +10,14 @@ class Wallet
     @db_path = db_path
   end
   
-  def reset
-    db.transaction do
-      db.delete(:balance)
-      db.delete(:accounts)
-      db.delete(:addresses)
-    end
-    self
-  end
-  
-  def getbalance
-    db.transaction do 
-      balance = db.fetch(:balance, BigDecimal.new('0.0'))
-      {'balance' => balance.to_s}
-    end
+  def getbalance(account_name = "")
+    ensure_account(account_name)
+    
+    {'balance' => t_accounts[account_name].balance}
   end
   
   def listaccounts
-    {'' => '0.00000000'}
+    {'' => BigDecimal.new('0')}
   end
   
   def getnewaddress 
@@ -42,14 +32,39 @@ class Wallet
     t_accounts[account_name].addresses
   end
   
+  # Testing methods
+  
+  def test_adjust_balance(account_name, amount)
+    t_accounts do |accounts|
+      accounts[account_name].balance = amount
+    end
+  end
+  
+  def test_reset
+    File.delete(db.path) if File.exists?(db.path)
+    self
+  end
+  
   private
   
-  def t_accounts(&block)
+  def ensure_account(account_name)
     db.transaction do 
-      accounts = db.fetch(:accounts,  {"" => Account.new("", []) })
+      accounts = db[:accounts] || {}
+      if accounts[account_name].nil?
+        accounts[account_name] = Account.new(account_name, [], BigDecimal.new('0'))
+      end
+      db[:accounts] = accounts
+    end
+  end
+  
+  def t_accounts(&block)
+    ensure_account("")
+    
+    db.transaction do 
+      accounts = db[:accounts]
       yield(accounts) if block
       db[:accounts] = accounts
-      accounts
+      db[:accounts]
     end
   end
             
@@ -57,7 +72,7 @@ class Wallet
     @db ||= PStore.new(db_path)
   end
   
-  class Account < Struct.new(:name, :addresses)
+  class Account < Struct.new(:name, :addresses, :balance)
   end
 end
 
