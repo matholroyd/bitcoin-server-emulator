@@ -4,7 +4,13 @@ A basic Sinatra app to emulate the JSON-RPC commands of the open source BitCoin 
 
 ## Why emulate the BitCoin server?
 
-In a word: speed. BitCoin transactions take on average ~10 minutes to be verified by the BitCoin network, and thats on the live network. On the testnet BitCoin blockchain, transactions can take hours to process. Hence trying to run tests on the live or test blockchain could take literally days to get results, not to mention cost money in BitCoin transaction fees.
+In a word: speed. BitCoin transactions take on average ~10 minutes to be verified by the BitCoin network, and thats on the live network. On the testnet BitCoin blockchain transactions can take hours to process. Hence trying to run tests on the live or test blockchain could take literally days to get results, not to mention cost money in BitCoin transaction fees.
+
+## What if the BitCoin server API changes?
+
+If it does change, we'll have to update this code. Please let me know if this happens!
+
+That said, considering the wide adoptance of the current open source project and hence its current API, it seems highly unlikely the API would change. The managers of the open source project would upset a lot of people if they changed the API, at least for the core methods.  On top of that, the current API works fine, so why would they change it?
 
 ## Command reference
 
