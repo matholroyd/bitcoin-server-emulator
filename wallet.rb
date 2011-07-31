@@ -11,9 +11,10 @@ class Wallet
   end
   
   def getbalance(account_name = "")
-    ensure_account(account_name)
+    ensure_account("")
     
-    {'balance' => t_accounts[account_name].balance}
+    balance = t_accounts[account_name] ? t_accounts[account_name].balance : bg(0)
+    {'balance' => balance}
   end
   
   def listaccounts

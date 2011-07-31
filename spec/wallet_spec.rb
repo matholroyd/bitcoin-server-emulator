@@ -24,6 +24,11 @@ describe Wallet do
     it 'listaccounts' do
       wallet.listaccounts.should == {"" => bg(0)}
     end
+    
+    it 'asking for balance of something that does not exist does not create it' do
+      wallet.getbalance("new-account")
+      wallet.listaccounts.should == {"" => bg(0)}
+    end
   end
       
   context 'generating addresses for ""' do
