@@ -10,7 +10,9 @@ In a word: speed. BitCoin transactions take on average ~10 minutes to be verifie
 
 If it does change, we'll have to update this code. Please let me know if this happens!
 
-That said, considering the wide adoptance of the current open source project and hence its current API, it seems highly unlikely the API would change. The managers of the open source project would upset a lot of people if they changed the API, at least for the core methods.  On top of that, the current API works fine, so why would they change it?
+That said, considering the wide adoptance of the current open source project and hence its current API, with literally millions of dollars on the line, change is likely to be slow. The managers of the open source project would upset a lot of people if they changed the core methods of the API.  
+
+As said above though, please send me a message (on GitHub) if the interface changes! 
 
 ## Command reference - impletemented 
 
@@ -22,7 +24,6 @@ Note that for the following the `[minconf=1]` option is not implemented.
     getreceivedbyaddress <bitcoinaddress> [minconf=1]
     getaddressesbyaccount <account>
     listaccounts [minconf=1]
-    listtransactions [account] [count=10]
 
     getnewaddress [account]
 
@@ -30,6 +31,7 @@ Note that for the following the `[minconf=1]` option is not implemented.
 
     sendfrom <fromaccount> <tobitcoinaddress> <amount> [minconf=1] [comment] [comment-to]
     move <fromaccount> <toaccount> <amount> [minconf=1] [comment]
+    listtransactions [account] [count=10]
 
 ## Command reference - not impletemented
 
