@@ -3,16 +3,20 @@ require File.dirname(__FILE__) + '/../wallet'
 BitCoinAddressRexExp = /^1[#{Wallet::Base58Chars}]{33}$/
 TestPath = File.dirname(__FILE__) + '/../bitcoin-wallet.cache.test'
 
+def bg(amount)
+  BigDecimal.new(amount.to_s)
+end
+
 describe Wallet do
   let(:wallet) { Wallet.new(TestPath).test_reset }
   
   context 'getbalance' do
     it do
-      wallet.getbalance.should == {'balance' => BigDecimal.new('0.0')}
+      wallet.getbalance.should == {'balance' => bg(0)}
     end
 
     it do
-      wallet.getbalance("some-account").should == {'balance' => BigDecimal.new('0.0')}
+      wallet.getbalance("some-account").should == {'balance' => bg(0)}
     end
   end
     
@@ -45,15 +49,35 @@ describe Wallet do
     it do
       result = wallet.listaccounts
       result.length.should == 1
-      result.first.should == ["", BigDecimal.new('0')]
+      result.first.should == ["", bg(0)]
     end
+  end
+  
+  context 'getaccount' do
+    it do 
+      address = wallet.getnewaddress
+      wallet.getaccount(address).should == ""
+    end
+  end
+  
+  context 'getreceivedbyaddress' do
+    it do
+      address = wallet.getnewaddress
+      wallet.getreceivedbyaddress(address).should == bg(0)
+    end
+    
+    # it do
+    #   address = wallet.getnewaddress
+    #   wallet.test_incoming_payment address, bg(7)
+    #   wallet.getreceivedbyaddress(address).should == bg(7)
+    # end
   end
   
   describe 'interface for testing' do
 
     it 'should adjust the balance' do
-      wallet.test_adjust_balance("", BigDecimal.new('1.5'))
-      wallet.getbalance.should == {'balance' => BigDecimal.new('1.5')}
+      wallet.test_adjust_balance("", bg(1.5))
+      wallet.getbalance.should == {'balance' => bg(1.5)}
     end
     
   end
