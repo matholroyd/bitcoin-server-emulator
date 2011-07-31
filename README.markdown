@@ -14,6 +14,27 @@ That said, considering the wide adoptance of the current open source project and
 
 As said above though, please send me a message (on GitHub) if the interface changes! 
 
+# Installing and running
+
+Currently this is not a gem, so you'll need to clone this repository to a directory.
+
+    git clone git://github.com/matholroyd/bitcoin-server-emulator.git
+    
+The app is a [Sinatra app](http://sinatrarb.com), so to run it you will need to install Sinatra:
+    
+    gem install sinatra
+
+To run, use the following in the directory you cloned this repository to:
+
+    ruby -rubygems start.rb (defaults to port 4567)
+
+Or if you prefer to use Shotgun:
+
+    gem install shotgun
+    shotgun start.rb  (defaults to port 9393)
+    
+
+
 ## Command reference - impletemented 
 
 Note that for the following the `[minconf=1]` option is not implemented.
