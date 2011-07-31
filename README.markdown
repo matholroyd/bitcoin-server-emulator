@@ -12,14 +12,30 @@ If it does change, we'll have to update this code. Please let me know if this ha
 
 That said, considering the wide adoptance of the current open source project and hence its current API, it seems highly unlikely the API would change. The managers of the open source project would upset a lot of people if they changed the API, at least for the core methods.  On top of that, the current API works fine, so why would they change it?
 
-## Command reference
+## Command reference - impletemented 
+
+Note that for the following the `[minconf=1]` option is not implemented.
+
+    getbalance [account] [minconf=1]
+    getaccount <bitcoinaddress>
+    getreceivedbyaccount <account> [minconf=1]
+    getreceivedbyaddress <bitcoinaddress> [minconf=1]
+    getaddressesbyaccount <account>
+    listaccounts [minconf=1]
+    listtransactions [account] [count=10]
+
+    getnewaddress [account]
+
+## Command reference - to impletement
+
+    sendfrom <fromaccount> <tobitcoinaddress> <amount> [minconf=1] [comment] [comment-to]
+    move <fromaccount> <toaccount> <amount> [minconf=1] [comment]
+
+## Command reference - not impletemented
 
     backupwallet <destination>
 
-    getaccount <bitcoinaddress>
     getaccountaddress <account>
-    getaddressesbyaccount <account>
-    getbalance [account] [minconf=1]
     getblockcount
     getblocknumber
     getconnectioncount
@@ -27,22 +43,14 @@ That said, considering the wide adoptance of the current open source project and
     getgenerate
     gethashespersec
     getinfo
-    getreceivedbyaccount <account> [minconf=1]
-    getreceivedbyaddress <bitcoinaddress> [minconf=1]
     gettransaction <txid>
     getwork [data]
 
     help [command]
 
-    listaccounts [minconf=1]
     listreceivedbyaccount [minconf=1] [includeempty=false]
     listreceivedbyaddress [minconf=1] [includeempty=false]
-    listtransactions [account] [count=10]
 
-    getnewaddress [account]
-
-    move <fromaccount> <toaccount> <amount> [minconf=1] [comment]
-    sendfrom <fromaccount> <tobitcoinaddress> <amount> [minconf=1] [comment] [comment-to]
     sendmany <fromaccount> {address:amount,...} [minconf=1] [comment]
     sendtoaddress <bitcoinaddress> <amount> [comment] [comment-to]
     setaccount <bitcoinaddress> <account>
@@ -50,3 +58,4 @@ That said, considering the wide adoptance of the current open source project and
 
     stop
     validateaddress <bitcoinaddress>
+
