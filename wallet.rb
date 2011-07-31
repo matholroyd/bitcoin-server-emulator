@@ -8,18 +8,16 @@ class Wallet
   
   def initialize(db_path = 'bitcoin-wallet.cache')
     @db_path = db_path
+    
+    ensure_account("")
   end
   
   def getbalance(account_name = "")
-    ensure_account("")
-    
     balance = t_accounts[account_name] ? t_accounts[account_name].balance : bg(0)
     {'balance' => balance}
   end
   
   def listaccounts
-    ensure_account("")
-    
     result = {}
     t_accounts.each do |account_name, account|
       result[account_name] = account.balance
@@ -47,9 +45,12 @@ class Wallet
   end
     
   def getaddressesbyaccount(account_name)
-    ensure_account(account_name)
     
-    t_accounts[account_name].addresses.collect {|raw_address, address| raw_address}
+    if t_accounts[account_name]
+      t_accounts[account_name].addresses.collect {|raw_address, address| raw_address}
+    else
+      []
+    end
   end
   
   def getreceivedbyaddress(address)
@@ -83,6 +84,7 @@ class Wallet
   
   def test_reset
     File.delete(db.path) if File.exists?(db.path)
+    ensure_account("")
     self
   end
 

@@ -25,9 +25,16 @@ describe Wallet do
       wallet.listaccounts.should == {"" => bg(0)}
     end
     
-    it 'asking for balance of something that does not exist does not create it' do
-      wallet.getbalance("new-account")
-      wallet.listaccounts.should == {"" => bg(0)}
+    describe 'methods do not create new accounts' do
+      it 'getbalance' do
+        wallet.getbalance("new-account")
+        wallet.listaccounts.should == {"" => bg(0)}
+      end
+
+      it 'getaddressesbyaccount' do
+        wallet.getaddressesbyaccount("new-account").should == []
+        wallet.listaccounts.should == {"" => bg(0)}
+      end
     end
   end
       
