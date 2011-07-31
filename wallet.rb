@@ -20,14 +20,14 @@ class Wallet
     {'' => bg(0)}
   end
   
-  def getnewaddress 
+  def getnewaddress(account_name = "")
     result = "1" + (1..33).collect { Base58Chars[rand(Base58Chars.length)] }.join
 
-    account_name = ""
+    ensure_account(account_name)
 
     address = Address.new(result, bg(0))
     t_accounts do |accounts|
-      accounts[account_name].addresses << address
+      accounts[account_name].addresses[result] = address
     end
     t_addresses do |addresses|
       addresses[address.address] = account_name
@@ -40,11 +40,14 @@ class Wallet
   end
     
   def getaddressesbyaccount(account_name)
-    t_accounts[account_name].addresses.collect(&:address)
+    ensure_account(account_name)
+    
+    t_accounts[account_name].addresses.collect {|raw_address, address| raw_address}
   end
   
   def getreceivedbyaddress(address)
-    bg(0)
+    account_name = t_addresses[address]
+    t_accounts[account_name].addresses[address].balance
   end
   
   # Testing methods
@@ -55,21 +58,21 @@ class Wallet
   end
 
   def test_adjust_balance(account_name, amount)
+    ensure_account(account_name)
+    
     t_accounts do |accounts|
       accounts[account_name].balance = amount
     end
   end
   
   def test_incoming_payment(address, amount)
-    # t_addresses do |addresses|
-    #   addresses[address].balance = amount
-    # end
+    account_name = t_addresses[address]
     
-    # account = addresses[address].account
-    
-    # t_accounts do |accounts|
-    #   accounts[]
-    # end
+    t_accounts do |accounts|
+      account = accounts[account_name]
+      account.balance += amount
+      account.addresses[address].balance += amount
+    end
   end
   
   private
@@ -82,15 +85,13 @@ class Wallet
     db.transaction do 
       accounts = db[:accounts] || {}
       if accounts[account_name].nil?
-        accounts[account_name] = Account.new(account_name, [], bg(0))
+        accounts[account_name] = Account.new(account_name, {}, bg(0))
       end
       db[:accounts] = accounts
     end
   end
   
   def t_accounts(&block)
-    ensure_account("")
-    
     db.transaction do 
       accounts = db[:accounts]
       yield(accounts) if block
