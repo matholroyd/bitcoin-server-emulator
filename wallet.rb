@@ -50,6 +50,28 @@ class Wallet
     t_accounts[account_name].addresses[address].balance
   end
   
+  def move(from_name, to_name, amount)
+    t_accounts do |accounts|
+      from = accounts[from_name]
+      to = accounts[to_name]
+      
+      from.balance -= amount
+      to.balance += amount
+    end
+  end
+
+  def sendfrom(from_name, to_address, amount)
+    to_name = t_addresses[to_address]
+    
+    t_accounts do |accounts|
+      from = accounts[from_name]
+      to = accounts[to_name]
+      
+      from.balance -= amount
+      to.balance += amount
+    end
+  end
+  
   # Testing methods
   
   def test_reset

@@ -101,6 +101,30 @@ describe Wallet do
     end
   end
   
+  context "move" do
+    it do
+      addressA = wallet.getnewaddress("A")
+      addressB = wallet.getnewaddress("B")
+      wallet.test_incoming_payment addressA, bg(2.5)
+      
+      wallet.move "A", "B", bg(2.5)
+      wallet.getbalance("A").should == {'balance' => bg(0)}
+      wallet.getbalance("B").should == {'balance' => bg(2.5)}
+    end
+  end
+  
+  context "sendfrom" do
+    it do
+      addressA = wallet.getnewaddress("A")
+      addressB = wallet.getnewaddress("B")
+      wallet.test_incoming_payment addressA, bg(2.5)
+
+      wallet.sendfrom "A", addressB, bg(2.5)
+      wallet.getbalance("A").should == {'balance' => bg(0)}
+      wallet.getbalance("B").should == {'balance' => bg(2.5)}
+    end
+  end
+  
   
   context 'testing interface' do
     it 'should adjust the balance' do
