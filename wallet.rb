@@ -17,7 +17,13 @@ class Wallet
   end
   
   def listaccounts
-    {'' => bg(0)}
+    ensure_account("")
+    
+    result = {}
+    t_accounts.each do |account_name, account|
+      result[account_name] = account.balance
+    end
+    result
   end
   
   def getnewaddress(account_name = "")

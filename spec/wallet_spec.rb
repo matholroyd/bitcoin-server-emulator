@@ -22,27 +22,31 @@ describe Wallet do
     end
 
     it 'listaccounts' do
-      wallet.listaccounts == [["", bg(0)]]
+      wallet.listaccounts.should == {"" => bg(0)}
     end
   end
       
   context 'generating addresses for ""' do
     let!(:address) { wallet.getnewaddress }
     
-    it do
+    it 'getnewaddress' do
       address.should =~ BitCoinAddressRexExp
     end
     
-    it do
+    it 'getaddressesbyaccount' do
       wallet.getaddressesbyaccount("").should == [address]      
     end
     
-    it do
+    it 'getaccount' do
       wallet.getaccount(address).should == ""
     end
     
-    it do
+    it 'getreceivedbyaddress' do
       wallet.getreceivedbyaddress(address).should == bg(0)
+    end
+
+    it 'listaccounts' do
+      wallet.listaccounts == [["", bg(0)]]
     end
     
     it do
@@ -55,28 +59,30 @@ describe Wallet do
   context 'generating addresses for "savings"' do
     let!(:address) { wallet.getnewaddress("savings") }
     
-    it do
+    it 'getnewaddress' do
       address.should =~ BitCoinAddressRexExp
-    end
-    
-    it do
-      wallet.getaddressesbyaccount("").       should == []      
-      wallet.getaddressesbyaccount("savings").should == [address]      
-    end
-    
-    it do
-      wallet.getaccount(address).should == "savings"
-    end
-    
-    it do
-      wallet.getreceivedbyaddress(address).should == bg(0)
-    end
-    
-    it do
       a2 = wallet.getnewaddress("savings")
       a2.should_not == address
       wallet.getaddressesbyaccount("savings").should == [address, a2]
     end
+    
+    it 'getaddressesbyaccount' do
+      wallet.getaddressesbyaccount("").       should == []      
+      wallet.getaddressesbyaccount("savings").should == [address]      
+    end
+    
+    it 'getaccount' do
+      wallet.getaccount(address).should == "savings"
+    end
+    
+    it 'getreceivedbyaddress' do
+      wallet.getreceivedbyaddress(address).should == bg(0)
+    end
+    
+    it 'listaccounts' do
+      wallet.listaccounts.should == {"" => bg(0), "savings" => bg(0)}
+    end
+    
   end
   
   context "receiving payments" do
@@ -99,17 +105,26 @@ describe Wallet do
       wallet.test_incoming_payment address, bg(2)
       wallet.getreceivedbyaddress(address).should == bg(9)
     end
+    
+    it do
+      wallet.listaccounts.should == {"" => bg(7)}
+
+      wallet.test_incoming_payment address, bg(2)
+      wallet.listaccounts.should == {"" => bg(9)}
+    end
   end
   
   context "move" do
     it do
       addressA = wallet.getnewaddress("A")
       addressB = wallet.getnewaddress("B")
-      wallet.test_incoming_payment addressA, bg(2.5)
+      wallet.test_incoming_payment addressA, bg(8)
+      wallet.listaccounts.should == {"" => bg(0), "A" => bg(8), "B" => bg(0)}
       
       wallet.move "A", "B", bg(2.5)
-      wallet.getbalance("A").should == {'balance' => bg(0)}
+      wallet.getbalance("A").should == {'balance' => bg(5.5)}
       wallet.getbalance("B").should == {'balance' => bg(2.5)}
+      wallet.listaccounts.should == {"" => bg(0), "A" => bg(5.5), "B" => bg(2.5)}
     end
   end
   
@@ -117,11 +132,13 @@ describe Wallet do
     it do
       addressA = wallet.getnewaddress("A")
       addressB = wallet.getnewaddress("B")
-      wallet.test_incoming_payment addressA, bg(2.5)
+      wallet.test_incoming_payment addressA, bg(8)
+      wallet.listaccounts.should == {"" => bg(0), "A" => bg(8), "B" => bg(0)}
 
       wallet.sendfrom "A", addressB, bg(2.5)
-      wallet.getbalance("A").should == {'balance' => bg(0)}
+      wallet.getbalance("A").should == {'balance' => bg(5.5)}
       wallet.getbalance("B").should == {'balance' => bg(2.5)}
+      wallet.listaccounts.should == {"" => bg(0), "A" => bg(5.5), "B" => bg(2.5)}
     end
   end
   
