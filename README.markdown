@@ -92,18 +92,32 @@ Below is a code snippet from the [API reference page](https://en.bitcoin.it/wiki
         end
     end
     
-## Persistence + 'simulate' methods
+## Persistence
 
 If you look inside the `wallet.rb` file you'll notice a `PStore` is used. This is used to persist the state of the 'wallet'. Hence if you use this app in development, balance/addresses/etc will be remembered.
 
+## Simulate and helper methods
+
+To help with setting up and simulating a running bitcoin server, several methods are provided to:
+
+* simulate certain events, e.g. receiving BitCoins from an outside source
+* help setup the server, e.g. account 'savings' has 10 BitCoins.  
+
+The methods are:
+
 **Simulate methods**
 
-To help with simulating a running bitcoin server, several methods are provided to simulate certain events, e.g. receiving BitCoins from an outside source, or to act as a shortcut to putting the wallet in a certain state, e.g. account 'savings' has 10 BitCoins.  The methods are:
-
-    simulate_reset
-    simulate_set_fee
-    simulate_adjust_balance(account_name, amount)
     simulate_incoming_payment(address, amount)
+
+**Helper methods**
+
+    helper_reset
+    helper_random_address
+    helper_random_txid
+    helper_set_fee(fee)
+    helper_set_confirmations(confirmations)
+    helper_set_time(time)
+    helper_adjust_balance(account_name, amount)
 
 # Command reference
 

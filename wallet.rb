@@ -123,12 +123,6 @@ class Wallet
     self
   end
   
-  def helper_set_fee(fee)
-    db.transaction do 
-      db[:fee] = fee
-    end
-  end
-
   def helper_random_address
     "1" + (1..33).collect { random_char(Base58Chars) }.join
   end
@@ -137,6 +131,12 @@ class Wallet
     (1..64).collect { random_char(Base16Chars) }.join
   end
   
+  def helper_set_fee(fee)
+    db.transaction do 
+      db[:fee] = fee
+    end
+  end
+
   def helper_set_confirmations(confirmations)
     db.transaction do 
       db[:confirmations] = confirmations
