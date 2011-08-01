@@ -7,10 +7,10 @@ get '/' do
 end
 
 post '/' do
-  process_jsonrpc(params)
+  process_jsonrpc
 end
 
-def process_jsonrpc(params)
+def process_jsonrpc
   data = JSON.parse request.body.read
   
   puts " data => #{data.inspect}"
