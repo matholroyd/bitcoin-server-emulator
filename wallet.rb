@@ -10,7 +10,7 @@ class Wallet
   def initialize(db_path = DefaultPath)
     @db_path = db_path
     
-    ensure_account("")
+    t_ensure_account("")
   end
   
   def getbalance(account_name = nil)
@@ -32,7 +32,7 @@ class Wallet
   def getnewaddress(account_name = "")
     result = "1" + (1..33).collect { Base58Chars[rand(Base58Chars.length)] }.join
 
-    ensure_account(account_name)
+    t_ensure_account(account_name)
 
     address = Address.new(result, bg(0))
     t_accounts do |accounts|
@@ -63,8 +63,8 @@ class Wallet
   end
   
   def move(from_name, to_name, amount)
-    ensure_account(from_name)
-    ensure_account(to_name)
+    t_ensure_account(from_name)
+    t_ensure_account(to_name)
     
     t_accounts do |accounts|
       from = accounts[from_name]
@@ -93,7 +93,7 @@ class Wallet
   
   def simulate_reset
     File.delete(db.path) if File.exists?(db.path)
-    ensure_account("")
+    t_ensure_account("")
     self
   end
   
@@ -104,7 +104,7 @@ class Wallet
   end
 
   def simulate_adjust_balance(account_name, amount)
-    ensure_account(account_name)
+    t_ensure_account(account_name)
     
     t_accounts do |accounts|
       accounts[account_name].balance = amount
@@ -127,7 +127,7 @@ class Wallet
     BigDecimal.new(amount.to_s)
   end
   
-  def ensure_account(account_name)
+  def t_ensure_account(account_name)
     db.transaction do 
       accounts = db[:accounts] || {}
       if accounts[account_name].nil?
