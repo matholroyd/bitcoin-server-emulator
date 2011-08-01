@@ -13,11 +13,18 @@ end
 def process_jsonrpc(params)
   data = JSON.parse request.body.read
   
-  puts "data => #{data.inspect}"
+  puts " data => #{data.inspect}"
   
   method = data['method']
+  params = data['params']
   
-  result = wallet.send(method)
+  begin
+    result = wallet.send(method, *params)
+  rescue ArgumentError
+    result = {"code" => -1, "message" => "Wrong number of arguments"}
+  end
+  
+  puts " reults => #{result.to_json}"
   result.to_json
 end
 
