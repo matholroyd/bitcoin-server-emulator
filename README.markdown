@@ -100,10 +100,10 @@ If you look inside the `wallet.rb` file you'll notice a `PStore` is used. This i
 
 To help with simulating a running bitcoin server, several methods are provided to simulate certain events, e.g. receiving BitCoins from an outside source, or to act as a shortcut to putting the wallet in a certain state, e.g. account 'savings' has 10 BitCoins.  The methods are:
 
-* simulate\_reset
-* simulate\_set_fee
-* simulate\_adjust\_balance(account_name, amount)
-* simulate\_incoming\_payment(address, amount)
+    simulate_reset
+    simulate_set_fee
+    simulate_adjust_balance(account_name, amount)
+    simulate_incoming_payment(address, amount)
 
 # Command reference
 
