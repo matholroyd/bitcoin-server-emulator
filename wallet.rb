@@ -77,12 +77,13 @@ class Wallet
 
   def sendfrom(from_name, to_address, amount)
     to_name = t_addresses[to_address]
+    fee = t_fee
     
     t_accounts do |accounts|
       from = accounts[from_name]
       to = accounts[to_name]
       
-      from.balance -= amount
+      from.balance -= (amount + fee)
       to.balance += amount
     end
   end
@@ -93,6 +94,12 @@ class Wallet
     File.delete(db.path) if File.exists?(db.path)
     ensure_account("")
     self
+  end
+  
+  def test_set_fee(fee)
+    db.transaction do 
+      db[:fee] = fee
+    end
   end
 
   def test_adjust_balance(account_name, amount)
@@ -144,6 +151,12 @@ class Wallet
       yield(addresses) if block
       db[:addresses] = addresses
       db[:addresses]
+    end
+  end
+  
+  def t_fee
+    db.transaction do 
+      db[:fee] ||= bg(0)
     end
   end
             

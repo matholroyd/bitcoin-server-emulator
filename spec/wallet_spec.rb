@@ -9,6 +9,8 @@ end
 
 describe Wallet do
   let(:wallet) { Wallet.new(TestPath).test_reset }
+  let(:addressA) { wallet.getnewaddress("A") }
+  let(:addressB) { wallet.getnewaddress("B") }
   
   context "blank slate" do
     it 'getbalance' do
@@ -129,41 +131,49 @@ describe Wallet do
   
   context "move" do
     it do
-      addressA = wallet.getnewaddress("A")
-      addressB = wallet.getnewaddress("B")
       wallet.test_incoming_payment addressA, bg(8)
-      wallet.listaccounts.should == {"" => bg(0), "A" => bg(8), "B" => bg(0)}
+      wallet.listaccounts.should == {"" => bg(0), "A" => bg(8)}
       
-      wallet.move("A", "B", bg(2.5)).should == true
+      wallet.move("A", "B", bg(3)).should == true
       wallet.getbalance.     should == bg(8)
-      wallet.getbalance("A").should == bg(5.5)
-      wallet.getbalance("B").should == bg(2.5)
-      wallet.listaccounts.should == {"" => bg(0), "A" => bg(5.5), "B" => bg(2.5)}
+      wallet.getbalance("A").should == bg(5)
+      wallet.getbalance("B").should == bg(3)
+      wallet.listaccounts.should == {"" => bg(0), "A" => bg(5), "B" => bg(3)}
     end
     
     it 'creates accounts if they do not exist' do
       wallet.listaccounts.should == {"" => bg(0)}
 
-      wallet.move("A", "B", bg(2.5)).should == true
+      wallet.move("A", "B", bg(3)).should == true
       wallet.getbalance.     should == bg(0)
-      wallet.getbalance("A").should == bg(-2.5)
-      wallet.getbalance("B").should == bg(2.5)
-      wallet.listaccounts.should == {"" => bg(0), "A" => bg(-2.5), "B" => bg(2.5)}
+      wallet.getbalance("A").should == bg(-3)
+      wallet.getbalance("B").should == bg(3)
+      wallet.listaccounts.should == {"" => bg(0), "A" => bg(-3), "B" => bg(3)}
     end
   end
   
   context "sendfrom" do
     it do
-      addressA = wallet.getnewaddress("A")
-      addressB = wallet.getnewaddress("B")
       wallet.test_incoming_payment addressA, bg(8)
-      wallet.listaccounts.should == {"" => bg(0), "A" => bg(8), "B" => bg(0)}
+      wallet.listaccounts.should == {"" => bg(0), "A" => bg(8)}
 
-      wallet.sendfrom "A", addressB, bg(2.5)
+      wallet.sendfrom "A", addressB, bg(3)
       wallet.getbalance.     should == bg(8)
-      wallet.getbalance("A").should == bg(5.5)
-      wallet.getbalance("B").should == bg(2.5)
-      wallet.listaccounts.should == {"" => bg(0), "A" => bg(5.5), "B" => bg(2.5)}
+      wallet.getbalance("A").should == bg(5)
+      wallet.getbalance("B").should == bg(3)
+      wallet.listaccounts.should == {"" => bg(0), "A" => bg(5), "B" => bg(3)}
+    end
+    
+    it "with fee" do
+      wallet.test_incoming_payment addressA, bg(8)
+      wallet.listaccounts.should == {"" => bg(0), "A" => bg(8)}
+      wallet.test_set_fee(bg(0.1))
+
+      wallet.sendfrom "A", addressB, bg(3)
+      wallet.getbalance.     should == bg(7.9)
+      wallet.getbalance("A").should == bg(4.9)
+      wallet.getbalance("B").should == bg(3)
+      wallet.listaccounts.should == {"" => bg(0), "A" => bg(4.9), "B" => bg(3)}
     end
   end
   
