@@ -46,7 +46,7 @@ As a reference, the two pages you are mostly likely interested in are:
 * [API call list](https://en.bitcoin.it/wiki/Original_Bitcoin_client/API_Calls_list)
 * [API reference (JSON-RPC)](https://en.bitcoin.it/wiki/API_reference_(JSON-RPC\))
 
-Below is a code snippet from the [API reference page](https://en.bitcoin.it/wiki/API_reference_(JSON-RPC\)) for sending POST requests in Ruby. **Note** I've changed the ServerProxy.new() example code to reflect the fact you don't need to set a username or password, as well as the default URL you would need call.
+Below is a code snippet from the [API reference page](https://en.bitcoin.it/wiki/API_reference_(JSON-RPC\)) for sending POST requests in Ruby. **Note** I've changed the ServerProxy.new() example code to reflect the fact you don't need to set a username or password, as well as the default URL you would need to call.
 
     =begin
     Make sure to do:
@@ -54,7 +54,6 @@ Below is a code snippet from the [API reference page](https://en.bitcoin.it/wiki
  
     Usage:
         h = ServiceProxy.new('http://localhost:4567')
-        puts h.getinfo.call
         puts h.getbalance.call 'accname'
     =end
     require 'json'
