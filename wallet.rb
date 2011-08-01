@@ -81,26 +81,7 @@ class Wallet
     to_name = t_addresses[to_address]
     fee = t_fee
 
-    txid = helper_random_txid
-    tx_hash = {
-      "amount" => -amount,
-      "fee" => -t_fee,
-      "confirmations" => t_confirmations,
-      "txid" => txid,
-      "time" => t_time,
-      "details" => [
-        {
-          "account" => from_name,
-          "address" => to_address,
-          "category" => "send",
-          "amount" => -amount
-        }
-      ]
-    }
-    
-    if t_fee > bg(0)
-      tx_hash['details'].first['fee'] = -t_fee
-    end
+    tx_hash, txid = t_transaction_hash(from_name, to_address, amount)
     
     t_accounts do |accounts|
       from = accounts[from_name]
@@ -109,13 +90,6 @@ class Wallet
       from.balance -= (amount + fee)
       if to
         to.balance += amount 
-        tx_hash['amount'] = bg(0)
-        tx_hash['details'] << {
-          "account" => to_name,
-          "address" => to_address,
-          "category" => "receive",
-          "amount" => amount
-        }
       end
     end
     
@@ -183,8 +157,48 @@ class Wallet
     end
   end
   
-  
   private
+  
+  def t_transaction_hash(from_name, to_address, amount)
+    txid = helper_random_txid
+    
+    tx_hash = {
+      "amount" => -amount,
+      "fee" => -t_fee,
+      "confirmations" => t_confirmations,
+      "txid" => txid,
+      "time" => t_time,
+      "details" => [
+        {
+          "account" => from_name,
+          "address" => to_address,
+          "category" => "send",
+          "amount" => -amount
+        }
+      ]
+    }
+    
+    if t_fee > bg(0)
+      tx_hash['details'].first['fee'] = -t_fee
+    end
+
+    to_name = t_addresses[to_address]
+    if to_name
+      t_accounts do |accounts|
+        to = accounts[to_name]
+      
+        tx_hash['amount'] = bg(0)
+        tx_hash['details'] << {
+          "account" => to_name,
+          "address" => to_address,
+          "category" => "receive",
+          "amount" => amount
+        }
+      end
+    end
+    
+    [tx_hash, txid]
+  end
   
   def random_char(chars)
     chars[rand(chars.length)]
