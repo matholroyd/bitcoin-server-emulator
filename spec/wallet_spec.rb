@@ -12,9 +12,9 @@ describe Wallet do
   
   context "blank slate" do
     it 'getbalance' do
-      wallet.getbalance.                should == {'balance' => bg(0)}
-      wallet.getbalance("").            should == {'balance' => bg(0)}
-      wallet.getbalance("some-account").should == {'balance' => bg(0)}
+      wallet.getbalance.                should == bg(0)
+      wallet.getbalance("").            should == bg(0)
+      wallet.getbalance("some-account").should == bg(0)
     end
 
     it 'getaddressesbyaccount' do 
@@ -106,10 +106,10 @@ describe Wallet do
     end
     
     it do
-      wallet.getbalance.should == {'balance' => bg(7)}
+      wallet.getbalance.should == bg(7)
 
       wallet.test_incoming_payment address, bg(2)
-      wallet.getbalance.should == {'balance' => bg(9)}
+      wallet.getbalance.should == bg(9)
     end
     
     it do
@@ -135,9 +135,9 @@ describe Wallet do
       wallet.listaccounts.should == {"" => bg(0), "A" => bg(8), "B" => bg(0)}
       
       wallet.move("A", "B", bg(2.5)).should == true
-      wallet.getbalance.     should == {'balance' => bg(8)}
-      wallet.getbalance("A").should == {'balance' => bg(5.5)}
-      wallet.getbalance("B").should == {'balance' => bg(2.5)}
+      wallet.getbalance.     should == bg(8)
+      wallet.getbalance("A").should == bg(5.5)
+      wallet.getbalance("B").should == bg(2.5)
       wallet.listaccounts.should == {"" => bg(0), "A" => bg(5.5), "B" => bg(2.5)}
     end
     
@@ -145,9 +145,9 @@ describe Wallet do
       wallet.listaccounts.should == {"" => bg(0)}
 
       wallet.move("A", "B", bg(2.5)).should == true
-      wallet.getbalance.     should == {'balance' => bg(0)}
-      wallet.getbalance("A").should == {'balance' => bg(-2.5)}
-      wallet.getbalance("B").should == {'balance' => bg(2.5)}
+      wallet.getbalance.     should == bg(0)
+      wallet.getbalance("A").should == bg(-2.5)
+      wallet.getbalance("B").should == bg(2.5)
       wallet.listaccounts.should == {"" => bg(0), "A" => bg(-2.5), "B" => bg(2.5)}
     end
   end
@@ -160,9 +160,9 @@ describe Wallet do
       wallet.listaccounts.should == {"" => bg(0), "A" => bg(8), "B" => bg(0)}
 
       wallet.sendfrom "A", addressB, bg(2.5)
-      wallet.getbalance.     should == {'balance' => bg(8)}
-      wallet.getbalance("A").should == {'balance' => bg(5.5)}
-      wallet.getbalance("B").should == {'balance' => bg(2.5)}
+      wallet.getbalance.     should == bg(8)
+      wallet.getbalance("A").should == bg(5.5)
+      wallet.getbalance("B").should == bg(2.5)
       wallet.listaccounts.should == {"" => bg(0), "A" => bg(5.5), "B" => bg(2.5)}
     end
   end
@@ -171,7 +171,7 @@ describe Wallet do
   context 'testing interface' do
     it 'should adjust the balance' do
       wallet.test_adjust_balance("", bg(1.5))
-      wallet.getbalance.should == {'balance' => bg(1.5)}
+      wallet.getbalance.should == bg(1.5)
     end
   end
     

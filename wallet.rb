@@ -13,13 +13,11 @@ class Wallet
   end
   
   def getbalance(account_name = nil)
-    balance = 
-      if account_name
-        t_accounts[account_name] ? t_accounts[account_name].balance : bg(0)
-      else
-        t_accounts.collect {|name, a| a}.inject(0) {|sum, a| sum += a.balance}
-      end
-    {'balance' => balance}
+    if account_name
+      t_accounts[account_name] ? t_accounts[account_name].balance : bg(0)
+    else
+      t_accounts.collect {|name, a| a}.inject(0) {|sum, a| sum += a.balance}
+    end
   end
   
   def listaccounts
