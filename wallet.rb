@@ -83,7 +83,7 @@ class Wallet
 
     txid = helper_random_txid
     tx_hash = {
-      "amount" => amount,
+      "amount" => -amount,
       "fee" => -t_fee,
       "confirmations" => t_confirmations,
       "txid" => txid,

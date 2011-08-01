@@ -251,6 +251,32 @@ describe Wallet do
         ]
       }
     end
+
+    it 'external' do
+      wallet.helper_adjust_balance("A", bg(10))
+      wallet.helper_set_confirmations(555)
+      wallet.helper_set_time(999)
+      wallet.helper_set_fee(bg(0.1))
+
+      txid = wallet.sendfrom("A", external_address, bg(3))
+
+      wallet.gettransaction(txid).should == {
+        "amount" => bg(-3),
+        "fee" => bg(-0.1),
+        "confirmations" => 555,
+        "txid" => txid,
+        "time" => 999,
+        "details" => [
+          {
+            "account" => "A",
+            "address" => external_address,
+            "category" => "send",
+            "amount" => bg(-3),
+            "fee" => bg(-0.1)
+          }
+        ]
+      }
+    end
   end
   
   
