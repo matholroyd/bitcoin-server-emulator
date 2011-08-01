@@ -37,9 +37,14 @@ Or if you prefer to use Shotgun:
     
 # Using
 
-To interact with the running server, you'll need to send POST requests to the bitcoin server emulator's URL.  The 
+To interact with the running server, you'll need to send POST requests to the bitcoin server emulator's URL.  The interface is designed to be a direct replica of what the official open source bitcoin server does, hence refer to that to learn what the commands are and what they should be returning.  
 
-The below code is a snippet on the [BitCoin forum](https://en.bitcoin.it/wiki/API_reference_(JSON-RPC\)) for sending POST requests in Ruby:
+As a reference, the two pages you are mostly likely interested in are:
+
+* [API call list](https://en.bitcoin.it/wiki/Original_Bitcoin_client/API_Calls_list)
+* [API reference (JSON-RPC)](https://en.bitcoin.it/wiki/API_reference_(JSON-RPC\))
+
+Below code is a snippet on the [API reference page](https://en.bitcoin.it/wiki/API_reference_(JSON-RPC\)) for sending POST requests in Ruby:
 
     =begin
     Make sure to do:
