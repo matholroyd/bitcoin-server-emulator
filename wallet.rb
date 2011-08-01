@@ -59,6 +59,9 @@ class Wallet
   end
   
   def move(from_name, to_name, amount)
+    ensure_account(from_name)
+    ensure_account(to_name)
+    
     t_accounts do |accounts|
       from = accounts[from_name]
       to = accounts[to_name]
@@ -66,6 +69,7 @@ class Wallet
       from.balance -= amount
       to.balance += amount
     end
+    true
   end
 
   def sendfrom(from_name, to_address, amount)

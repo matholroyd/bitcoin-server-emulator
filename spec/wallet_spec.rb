@@ -133,10 +133,17 @@ describe Wallet do
       wallet.test_incoming_payment addressA, bg(8)
       wallet.listaccounts.should == {"" => bg(0), "A" => bg(8), "B" => bg(0)}
       
-      wallet.move "A", "B", bg(2.5)
+      wallet.move("A", "B", bg(2.5)).should == true
       wallet.getbalance("A").should == {'balance' => bg(5.5)}
       wallet.getbalance("B").should == {'balance' => bg(2.5)}
       wallet.listaccounts.should == {"" => bg(0), "A" => bg(5.5), "B" => bg(2.5)}
+    end
+    
+    it 'creates accounts if they do not exist' do
+      wallet.listaccounts.should == {"" => bg(0)}
+
+      wallet.move("A", "B", bg(2.5)).should == true
+      wallet.listaccounts.should == {"" => bg(0), "A" => bg(-2.5), "B" => bg(2.5)}
     end
   end
   
