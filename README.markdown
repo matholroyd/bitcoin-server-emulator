@@ -2,11 +2,13 @@
 
 A basic Sinatra app to emulate the JSON-RPC commands of the open source BitCoin server daemon, for testing purposes.  It is in used to speed up tests for [BitPiggy](http://bitpiggy.com).
 
-## Why emulate the BitCoin server?
+**Why emulate the BitCoin server?**
 
-In a word: speed. BitCoin transactions take on average ~10 minutes to be verified by the BitCoin network, and thats on the live network. On the testnet BitCoin blockchain transactions can take hours to process. Hence trying to run tests on the live or test blockchain could take literally days to get results, not to mention cost money in BitCoin transaction fees.
+In a word, **speed**. 
 
-## What if the BitCoin server API changes?
+BitCoin transactions take on average ~10 minutes to be verified by the BitCoin network, and thats on the live network. On the testnet BitCoin blockchain transactions can take hours to process. Hence trying to run tests on the live or test blockchain could take literally days to get results, not to mention cost money in BitCoin transaction fees.
+
+**What if the BitCoin server API changes?**
 
 If it does change, we'll have to update this code. Please let me know if this happens!
 
@@ -34,10 +36,11 @@ Or if you prefer to use Shotgun:
     shotgun start.rb  (defaults to port 9393)
     
 
+## Command reference
 
-## Command reference - impletemented 
+**Implemented**
 
-Note that for the following the `[minconf=1]` option is not implemented.
+Note that for the following the `[minconf=1]` and `[comment]` options are not implemented.
 
     getbalance [account] [minconf=1]
     getaccount <bitcoinaddress>
@@ -47,14 +50,15 @@ Note that for the following the `[minconf=1]` option is not implemented.
     listaccounts [minconf=1]
 
     getnewaddress [account]
+    move <fromaccount> <toaccount> <amount> [minconf=1] [comment]
 
-## Command reference - to impletement
+**To be implemented**
 
     sendfrom <fromaccount> <tobitcoinaddress> <amount> [minconf=1] [comment] [comment-to]
-    move <fromaccount> <toaccount> <amount> [minconf=1] [comment]
     listtransactions [account] [count=10]
+    gettransaction <txid>
 
-## Command reference - not impletemented
+**Not implemented**
 
     backupwallet <destination>
 
@@ -66,7 +70,6 @@ Note that for the following the `[minconf=1]` option is not implemented.
     getgenerate
     gethashespersec
     getinfo
-    gettransaction <txid>
     getwork [data]
 
     help [command]
