@@ -111,21 +111,21 @@ To help with simulating a running bitcoin server, several methods are provided t
 
 Note that for the following the `[minconf=1]` and `[comment]` options are not implemented.
 
-    getbalance [account] [minconf=1]
     getaccount <bitcoinaddress>
+    getbalance [account] [minconf=1]
+    getaddressesbyaccount <account>
     getreceivedbyaccount <account> [minconf=1]
     getreceivedbyaddress <bitcoinaddress> [minconf=1]
-    getaddressesbyaccount <account>
+    gettransaction <txid>
     listaccounts [minconf=1]
 
     getnewaddress [account]
     move <fromaccount> <toaccount> <amount> [minconf=1] [comment]
+    sendfrom <fromaccount> <tobitcoinaddress> <amount> [minconf=1] [comment] [comment-to]
 
 **To be implemented**
 
-    sendfrom <fromaccount> <tobitcoinaddress> <amount> [minconf=1] [comment] [comment-to]
     listtransactions [account] [count=10]
-    gettransaction <txid>
 
 **Not implemented**
 
