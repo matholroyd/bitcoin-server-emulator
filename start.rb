@@ -24,7 +24,7 @@ def process_jsonrpc(params)
     result = {"code" => -1, "message" => "Wrong number of arguments"}
   end
   
-  puts " reults => #{result.to_json}"
+  puts " result => #{result.to_json}"
   result.to_json
 end
 
