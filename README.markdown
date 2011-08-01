@@ -37,7 +37,9 @@ Or if you prefer to use Shotgun:
     
 # Using
 
-To interact with the running server, you'll need to send POST requests to the bitcoin server emulator's URL.  The interface is designed to be a direct replica of what the official open source bitcoin server does, hence refer to that to learn what the commands are and what they should be returning.  
+To interact with the running server, you'll need to send POST requests to the bitcoin server emulator's URL.  By default that is `http://localhost:4567`.  
+
+The interface is designed to be a direct replica of what the official open source bitcoin server does, hence refer to that to learn what the commands are and what they should be returning.  
 
 As a reference, the two pages you are mostly likely interested in are:
 
@@ -90,7 +92,19 @@ Below is a code snippet from the [API reference page](https://en.bitcoin.it/wiki
             return resp['result']
         end
     end
+    
+## Persistence + 'simulate' methods
 
+If you look inside the `wallet.rb` file you'll notice a `PStore` is used. This is used to persist the state of the 'wallet'. Hence if you use this app in development, balance/addresses/etc will be remembered.
+
+**Simulate methods**
+
+To help with simulating a running bitcoin server, several methods are provided to simulate certain events, e.g. receiving BitCoins from an outside source, or to act as a shortcut to putting the wallet in a certain state, e.g. account 'savings' has 10 BitCoins.  The methods are:
+
+* simulate\_reset
+* simulate\_set_fee
+* simulate\_adjust\_balance(account_name, amount)
+* simulate\_incoming\_payment(address, amount)
 
 # Command reference
 
