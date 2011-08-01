@@ -8,7 +8,7 @@ def bg(amount)
 end
 
 describe Wallet do
-  let(:wallet) { Wallet.new(TestPath).test_reset }
+  let(:wallet) { Wallet.new(TestPath).simulate_reset }
   let(:addressA) { wallet.getnewaddress("A") }
   let(:addressB) { wallet.getnewaddress("B") }
   
@@ -104,34 +104,34 @@ describe Wallet do
     let(:address) { wallet.getnewaddress }
     
     before :each do
-      wallet.test_incoming_payment address, bg(7)
+      wallet.simulate_incoming_payment address, bg(7)
     end
     
     it do
       wallet.getbalance.should == bg(7)
 
-      wallet.test_incoming_payment address, bg(2)
+      wallet.simulate_incoming_payment address, bg(2)
       wallet.getbalance.should == bg(9)
     end
     
     it do
       wallet.getreceivedbyaddress(address).should == bg(7)
 
-      wallet.test_incoming_payment address, bg(2)
+      wallet.simulate_incoming_payment address, bg(2)
       wallet.getreceivedbyaddress(address).should == bg(9)
     end
     
     it do
       wallet.listaccounts.should == {"" => bg(7)}
 
-      wallet.test_incoming_payment address, bg(2)
+      wallet.simulate_incoming_payment address, bg(2)
       wallet.listaccounts.should == {"" => bg(9)}
     end
   end
   
   context "move" do
     it do
-      wallet.test_incoming_payment addressA, bg(8)
+      wallet.simulate_incoming_payment addressA, bg(8)
       wallet.listaccounts.should == {"" => bg(0), "A" => bg(8)}
       
       wallet.move("A", "B", bg(3)).should == true
@@ -154,7 +154,7 @@ describe Wallet do
   
   context "sendfrom" do
     it do
-      wallet.test_incoming_payment addressA, bg(8)
+      wallet.simulate_incoming_payment addressA, bg(8)
       wallet.listaccounts.should == {"" => bg(0), "A" => bg(8)}
 
       wallet.sendfrom "A", addressB, bg(3)
@@ -165,9 +165,9 @@ describe Wallet do
     end
     
     it "with fee" do
-      wallet.test_incoming_payment addressA, bg(8)
+      wallet.simulate_incoming_payment addressA, bg(8)
       wallet.listaccounts.should == {"" => bg(0), "A" => bg(8)}
-      wallet.test_set_fee(bg(0.1))
+      wallet.simulate_set_fee(bg(0.1))
 
       wallet.sendfrom "A", addressB, bg(3)
       wallet.getbalance.     should == bg(7.9)
@@ -178,9 +178,9 @@ describe Wallet do
   end
   
   
-  context 'testing interface' do
+  context 'simulate interface' do
     it 'should adjust the balance' do
-      wallet.test_adjust_balance("", bg(1.5))
+      wallet.simulate_adjust_balance("", bg(1.5))
       wallet.getbalance.should == bg(1.5)
     end
   end

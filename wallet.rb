@@ -3,10 +3,11 @@ require 'bigdecimal'
 
 class Wallet
   Base58Chars = ('a'..'z').to_a + ('A'..'Z').to_a + (0..9).to_a - %w{0 O I l}
+  DefaultPath = File.dirname(__FILE__) + '/bitcoin-wallet.cache'
   
   attr_reader :db_path
   
-  def initialize(db_path = 'bitcoin-wallet.cache')
+  def initialize(db_path = DefaultPath)
     @db_path = db_path
     
     ensure_account("")
@@ -88,21 +89,21 @@ class Wallet
     end
   end
   
-  # Testing methods
+  # Simlulate methods
   
-  def test_reset
+  def simulate_reset
     File.delete(db.path) if File.exists?(db.path)
     ensure_account("")
     self
   end
   
-  def test_set_fee(fee)
+  def simulate_set_fee(fee)
     db.transaction do 
       db[:fee] = fee
     end
   end
 
-  def test_adjust_balance(account_name, amount)
+  def simulate_adjust_balance(account_name, amount)
     ensure_account(account_name)
     
     t_accounts do |accounts|
@@ -110,7 +111,7 @@ class Wallet
     end
   end
   
-  def test_incoming_payment(address, amount)
+  def simulate_incoming_payment(address, amount)
     account_name = t_addresses[address]
     
     t_accounts do |accounts|
