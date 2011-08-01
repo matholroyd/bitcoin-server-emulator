@@ -8,9 +8,10 @@ def bg(amount)
 end
 
 describe Wallet do
-  let(:wallet) { Wallet.new(TestPath).simulate_reset }
+  let(:wallet) { Wallet.new(TestPath).helper_reset }
   let(:addressA) { wallet.getnewaddress("A") }
   let(:addressB) { wallet.getnewaddress("B") }
+  let(:external_address) { wallet.helper_random_address }
   
   context "blank slate" do
     it 'getbalance' do
@@ -167,7 +168,7 @@ describe Wallet do
     it "with fee" do
       wallet.simulate_incoming_payment addressA, bg(8)
       wallet.listaccounts.should == {"" => bg(0), "A" => bg(8)}
-      wallet.simulate_set_fee(bg(0.1))
+      wallet.helper_set_fee(bg(0.1))
 
       wallet.sendfrom "A", addressB, bg(3)
       wallet.getbalance.     should == bg(7.9)
@@ -175,12 +176,87 @@ describe Wallet do
       wallet.getbalance("B").should == bg(3)
       wallet.listaccounts.should == {"" => bg(0), "A" => bg(4.9), "B" => bg(3)}
     end
+    
+    it "external" do
+      wallet.simulate_incoming_payment addressA, bg(8)
+      wallet.listaccounts.should == {"" => bg(0), "A" => bg(8)}
+      wallet.helper_set_fee(bg(0.1))
+
+      wallet.sendfrom "A", external_address, bg(3)
+      wallet.getbalance.     should == bg(4.9)
+      wallet.getbalance("A").should == bg(4.9)
+      wallet.listaccounts.should == {"" => bg(0), "A" => bg(4.9)}
+    end
+  end
+  
+  context "gettransaction" do
+    it do 
+      wallet.helper_adjust_balance("A", bg(10))
+      wallet.helper_set_confirmations(555)
+      wallet.helper_set_time(999)
+
+      txid = wallet.sendfrom("A", addressB, bg(3))
+
+      wallet.gettransaction(txid).should == {
+        "amount" => bg(0),
+        "fee" => bg(0),
+        "confirmations" => 555,
+        "txid" => txid,
+        "time" => 999,
+        "details" => [
+          {
+            "account" => "A",
+            "address" => addressB,
+            "category" => "send",
+            "amount" => bg(-3)
+          },
+          {
+            "account" => "B",
+            "address" => addressB,
+            "category" => "receive",
+            "amount" => bg(3)
+          }
+        ]
+      }
+    end
+    
+    it 'with fee' do
+      wallet.helper_adjust_balance("A", bg(10))
+      wallet.helper_set_confirmations(555)
+      wallet.helper_set_time(999)
+      wallet.helper_set_fee(bg(0.1))
+
+      txid = wallet.sendfrom("A", addressB, bg(3))
+
+      wallet.gettransaction(txid).should == {
+        "amount" => bg(0),
+        "fee" => bg(-0.1),
+        "confirmations" => 555,
+        "txid" => txid,
+        "time" => 999,
+        "details" => [
+          {
+            "account" => "A",
+            "address" => addressB,
+            "category" => "send",
+            "amount" => bg(-3),
+            "fee" => bg(-0.1)
+          },
+          {
+            "account" => "B",
+            "address" => addressB,
+            "category" => "receive",
+            "amount" => bg(3)
+          }
+        ]
+      }
+    end
   end
   
   
   context 'simulate interface' do
     it 'should adjust the balance' do
-      wallet.simulate_adjust_balance("", bg(1.5))
+      wallet.helper_adjust_balance("", bg(1.5))
       wallet.getbalance.should == bg(1.5)
     end
   end

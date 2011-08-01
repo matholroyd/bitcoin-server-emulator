@@ -3,6 +3,7 @@ require 'bigdecimal'
 
 class Wallet
   Base58Chars = ('a'..'z').to_a + ('A'..'Z').to_a + (0..9).to_a - %w{0 O I l}
+  Base16Chars = (0..9).to_a + ('a'..'f').to_a
   DefaultPath = File.dirname(__FILE__) + '/bitcoin-wallet.cache'
   
   attr_reader :db_path
@@ -30,7 +31,7 @@ class Wallet
   end
   
   def getnewaddress(account_name = "")
-    result = "1" + (1..33).collect { Base58Chars[rand(Base58Chars.length)] }.join
+    result = helper_random_address
 
     t_ensure_account(account_name)
 
@@ -79,38 +80,57 @@ class Wallet
   def sendfrom(from_name, to_address, amount)
     to_name = t_addresses[to_address]
     fee = t_fee
+
+    txid = helper_random_txid
+    tx_hash = {
+      "amount" => amount,
+      "fee" => -t_fee,
+      "confirmations" => t_confirmations,
+      "txid" => txid,
+      "time" => t_time,
+      "details" => [
+        {
+          "account" => from_name,
+          "address" => to_address,
+          "category" => "send",
+          "amount" => -amount
+        }
+      ]
+    }
+    
+    if t_fee > bg(0)
+      tx_hash['details'].first['fee'] = -t_fee
+    end
     
     t_accounts do |accounts|
       from = accounts[from_name]
       to = accounts[to_name]
       
       from.balance -= (amount + fee)
-      to.balance += amount
+      if to
+        to.balance += amount 
+        tx_hash['amount'] = bg(0)
+        tx_hash['details'] << {
+          "account" => to_name,
+          "address" => to_address,
+          "category" => "receive",
+          "amount" => amount
+        }
+      end
     end
+    
+    t_transactions do |transactions|
+      transactions[txid] = tx_hash
+     end
+    txid
+  end
+  
+  def gettransaction(txid)
+    t_transactions[txid]
   end
   
   # Simlulate methods
-  
-  def simulate_reset
-    File.delete(db.path) if File.exists?(db.path)
-    t_ensure_account("")
-    self
-  end
-  
-  def simulate_set_fee(fee)
-    db.transaction do 
-      db[:fee] = fee
-    end
-  end
-
-  def simulate_adjust_balance(account_name, amount)
-    t_ensure_account(account_name)
     
-    t_accounts do |accounts|
-      accounts[account_name].balance = amount
-    end
-  end
-  
   def simulate_incoming_payment(address, amount)
     account_name = t_addresses[address]
     
@@ -121,7 +141,54 @@ class Wallet
     end
   end
   
+  # helper methods
+
+  def helper_reset
+    File.delete(db.path) if File.exists?(db.path)
+    t_ensure_account("")
+    self
+  end
+  
+  def helper_set_fee(fee)
+    db.transaction do 
+      db[:fee] = fee
+    end
+  end
+
+  def helper_random_address
+    "1" + (1..33).collect { random_char(Base58Chars) }.join
+  end
+  
+  def helper_random_txid
+    (1..64).collect { random_char(Base16Chars) }.join
+  end
+  
+  def helper_set_confirmations(confirmations)
+    db.transaction do 
+      db[:confirmations] = confirmations
+    end
+  end
+
+  def helper_set_time(time)
+    db.transaction do 
+      db[:time] = time
+    end
+  end
+
+  def helper_adjust_balance(account_name, amount)
+    t_ensure_account(account_name)
+    
+    t_accounts do |accounts|
+      accounts[account_name].balance = amount
+    end
+  end
+  
+  
   private
+  
+  def random_char(chars)
+    chars[rand(chars.length)]
+  end
   
   def bg(amount)
     BigDecimal.new(amount.to_s)
@@ -142,7 +209,6 @@ class Wallet
       accounts = db[:accounts]
       yield(accounts) if block
       db[:accounts] = accounts
-      db[:accounts]
     end
   end
     
@@ -151,7 +217,14 @@ class Wallet
       addresses = db[:addresses] || {}
       yield(addresses) if block
       db[:addresses] = addresses
-      db[:addresses]
+    end
+  end
+
+  def t_transactions(&block)
+    db.transaction do 
+      transactions = db[:transactions] || {}
+      yield(transactions) if block
+      db[:transactions] = transactions
     end
   end
   
@@ -160,7 +233,19 @@ class Wallet
       db[:fee] ||= bg(0)
     end
   end
-            
+
+  def t_confirmations
+    db.transaction do 
+      db[:confirmations] ||= 1
+    end
+  end
+
+  def t_time
+    db.transaction do 
+      db[:time] ||= 0
+    end
+  end
+  
   def db
     @db ||= PStore.new(db_path)
   end
