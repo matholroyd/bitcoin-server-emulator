@@ -19,7 +19,7 @@ def process_jsonrpc(params)
   params = data['params']
   
   begin
-    result = wallet.send(method, *params)
+    result = {'result' => wallet.send(method, *params)}
   rescue ArgumentError
     result = {"code" => -1, "message" => "Wrong number of arguments"}
   end
