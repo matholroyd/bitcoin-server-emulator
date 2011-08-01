@@ -35,8 +35,59 @@ Or if you prefer to use Shotgun:
     gem install shotgun
     shotgun start.rb  (defaults to port 9393)
     
+# Using
 
-## Command reference
+To interact with the running server, you'll need to send POST requests to the bitcoin server emulator's URL.  The 
+
+The below code is a snippet on the [BitCoin forum](https://en.bitcoin.it/wiki/API_reference_(JSON-RPC\)) for sending POST requests in Ruby:
+
+    =begin
+    Make sure to do:
+        gem install rest-client
+ 
+    Usage:
+        h = ServiceProxy.new('http://user:password@127.0.0.1:8332')
+        puts h.getinfo.call
+        puts h.getbalance.call 'accname'
+    =end
+    require 'json'
+    require 'rest_client'
+ 
+    class JSONRPCException < RuntimeError
+        def initialize()
+            super()
+        end
+    end
+ 
+    class ServiceProxy
+        def initialize(service_url, service_name=nil)
+            @service_url = service_url
+            @service_name = service_name
+        end
+ 
+        def method_missing(name, *args, &block)
+            if @service_name != nil
+                name = "%s.%s" % [@service_name, name]
+            end
+            return ServiceProxy.new(@service_url, name)
+        end
+ 
+        def respond_to?(sym)
+        end
+ 
+        def call(*args)
+            postdata = {"method" => @service_name, "params" => args, "id" => "jsonrpc"}.to_json
+            respdata = RestClient.post @service_url, postdata
+            resp = JSON.parse respdata
+            if resp["error"] != nil
+                raise JSONRPCException.new, resp['error']
+            end
+            return resp['result']
+        end
+    end
+
+
+# Command reference
 
 **Implemented**
 
