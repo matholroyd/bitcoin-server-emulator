@@ -76,6 +76,10 @@ class Wallet
     end
     true
   end
+  
+  def listtransactions
+    []
+  end
 
   def sendfrom(from_name, to_address, amount)
     to_name = t_addresses[to_address]
