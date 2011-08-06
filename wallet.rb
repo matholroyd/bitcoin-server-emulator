@@ -94,11 +94,19 @@ class Wallet
         to.balance += amount 
       end
     end
+
+    txid = helper_random_txid
+
+    tx_hash = t_transaction_outgoing_hash(txid, from_name, to_address, amount)
+    t_transactions do |transactions|
+      transactions << tx_hash
+    end
     
-    tx_hash, txid = t_transaction_grouped_hash(from_name, to_address, amount)
+    tx_hash = t_transaction_grouped_hash(txid, from_name, to_address, amount)
     t_transactions_grouped do |transactions_grouped|
       transactions_grouped[txid] = tx_hash
      end
+     
     txid
   end
   
@@ -117,7 +125,9 @@ class Wallet
       account.addresses[address].balance += amount
     end
     
-    tx_hash, txid = t_transaction_incoming_hash(address, amount)
+    txid = helper_random_txid
+    
+    tx_hash = t_transaction_incoming_hash(txid, address, amount)
     t_transactions do |transactions|
       transactions << tx_hash
     end
@@ -169,12 +179,22 @@ class Wallet
   
   private
   
-  def t_transaction_incoming_hash(address, amount)
-    txid = helper_random_txid
-    account_name = t_addresses[address]
-    
-    tx_hash = {
+  def t_transaction_outgoing_hash(txid, account_name, address, amount)
+    {
       "account" => account_name,
+      "address" => address,
+      "category" => "send",
+      "amount" => -amount,
+      "fee" => -t_fee,
+      "confirmations" => t_confirmations,
+      "txid" => txid,
+      "time" => t_time
+    }
+  end
+  
+  def t_transaction_incoming_hash(txid, address, amount)
+    {
+      "account" => t_addresses[address],
       "address" => address,
       "category" => "receive",
       "amount" => amount,
@@ -182,13 +202,9 @@ class Wallet
       "txid" => txid,
       "time" => t_time
     }
-    
-    [tx_hash, txid]
   end
   
-  def t_transaction_grouped_hash(from_name, to_address, amount)
-    txid = helper_random_txid
-    
+  def t_transaction_grouped_hash(txid, from_name, to_address, amount)
     tx_hash = {
       "amount" => -amount,
       "fee" => -t_fee,
@@ -224,7 +240,7 @@ class Wallet
       end
     end
     
-    [tx_hash, txid]
+    tx_hash
   end
   
   def random_char(chars)

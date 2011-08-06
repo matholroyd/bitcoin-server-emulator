@@ -288,7 +288,7 @@ describe Wallet do
   end
   
   context 'listtransactions' do
-    it 'incoming transaction' do
+    it 'incoming' do
       wallet.helper_set_confirmations(555)
       wallet.helper_set_time(999)
       wallet.helper_set_fee(bg(0.1))
@@ -299,6 +299,26 @@ describe Wallet do
         "address" => addressA,
         "category" => "receive",
         "amount" => bg(8),
+        "confirmations" => 555,
+        "txid" => txid,
+        "time" => 999
+      }]
+    end
+    
+    it 'outgoing' do
+      wallet.helper_set_confirmations(555)
+      wallet.helper_set_time(999)
+      wallet.helper_set_fee(bg(0.1))
+
+      txid = wallet.helper_adjust_balance 'A', bg(10)
+      txid = wallet.sendfrom 'A', external_address, bg(2)
+      
+      wallet.listtransactions.should == [{
+        "account" => "A",
+        "address" => external_address,
+        "category" => "send",
+        "amount" => bg(-2),
+        "fee" => bg(-0.1),
         "confirmations" => 555,
         "txid" => txid,
         "time" => 999
