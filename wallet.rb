@@ -78,7 +78,7 @@ class Wallet
   end
   
   def listtransactions
-    []
+    t_transactions
   end
 
   def sendfrom(from_name, to_address, amount)
@@ -237,13 +237,13 @@ class Wallet
     end
   end
 
-  # def t_transactions(&block)
-  #   db.transaction do 
-  #     transactions = db[:transactions] || {}
-  #     yield(transactions) if block
-  #     db[:transactions] = transactions
-  #   end
-  # end
+  def t_transactions(&block)
+    db.transaction do 
+      transactions = db[:transactions] || []
+      yield(transactions) if block
+      db[:transactions] = transactions
+    end
+  end
 
   def t_transactions_grouped(&block)
     db.transaction do 
