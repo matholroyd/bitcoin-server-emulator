@@ -74,6 +74,12 @@ class Wallet
       from.balance -= amount
       to.balance += amount
     end
+    
+    tx_hashes = t_transaction_move_hashes(from_name, to_name, amount)
+    t_transactions do |transactions|
+      tx_hashes.each {|t| transactions.push(t)}
+    end
+    
     true
   end
   
@@ -202,6 +208,25 @@ class Wallet
       "txid" => txid,
       "time" => t_time
     }
+  end
+
+  def t_transaction_move_hashes(from, to, amount)
+    [{
+         "account" => to,
+         "category" => "move",
+         "time" => t_time,
+         "amount" => amount,
+         "otheraccount" => from,
+         "comment" => ""
+     },
+     {
+         "account" => from,
+         "category" => "move",
+         "time" => t_time,
+         "amount" => -amount,
+         "otheraccount" => to,
+         "comment" => ""
+     }]
   end
   
   def t_transaction_grouped_hash(txid, from_name, to_address, amount)

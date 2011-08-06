@@ -288,6 +288,30 @@ describe Wallet do
   end
   
   context 'listtransactions' do
+    it 'move' do
+      wallet.helper_set_time(999)
+      wallet.move("A", "B", bg(3))
+      
+      wallet.listtransactions.should == [
+        {
+             "account" => "B",
+             "category" => "move",
+             "time" => 999,
+             "amount" => bg(3),
+             "otheraccount" => "A",
+             "comment" => ""
+         },
+         {
+             "account" => "A",
+             "category" => "move",
+             "time" => 999,
+             "amount" => -bg(3),
+             "otheraccount" => "B",
+             "comment" => ""
+         }
+      ]
+    end
+    
     it 'incoming' do
       wallet.helper_set_confirmations(555)
       wallet.helper_set_time(999)
