@@ -15,12 +15,9 @@ def process_jsonrpc(db_name = 'bitcoin-wallet')
   
   puts " db-name => #{db_name}"
   puts " data => #{data.inspect}"
-  
-  method = data['method']
-  params = data['params']
-  
+    
   begin
-    result = {'result' => wallet(db_name).send(method, *params)}
+    result = {'result' => wallet(db_name).send(data['method'], *data['params'])}
   rescue ArgumentError
     result = {"code" => -1, "message" => "Wrong number of arguments"}
   end
