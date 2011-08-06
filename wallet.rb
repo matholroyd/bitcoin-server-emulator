@@ -116,6 +116,13 @@ class Wallet
       account.balance += amount
       account.addresses[address].balance += amount
     end
+    
+    tx_hash, txid = t_transaction_incoming_hash(address, amount)
+    t_transactions do |transactions|
+      transactions << tx_hash
+    end
+    
+    txid
   end
   
   # helper methods
@@ -161,6 +168,23 @@ class Wallet
   end
   
   private
+  
+  def t_transaction_incoming_hash(address, amount)
+    txid = helper_random_txid
+    account_name = t_addresses[address]
+    
+    tx_hash = {
+      "account" => account_name,
+      "address" => address,
+      "category" => "receive",
+      "amount" => amount,
+      "confirmations" => t_confirmations,
+      "txid" => txid,
+      "time" => t_time
+    }
+    
+    [tx_hash, txid]
+  end
   
   def t_transaction_grouped_hash(from_name, to_address, amount)
     txid = helper_random_txid
