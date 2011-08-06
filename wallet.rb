@@ -85,8 +85,6 @@ class Wallet
     to_name = t_addresses[to_address]
     fee = t_fee
 
-    tx_hash, txid = t_transaction_hash(from_name, to_address, amount)
-    
     t_accounts do |accounts|
       from = accounts[from_name]
       to = accounts[to_name]
@@ -97,14 +95,15 @@ class Wallet
       end
     end
     
-    t_transactions do |transactions|
-      transactions[txid] = tx_hash
+    tx_hash, txid = t_transaction_grouped_hash(from_name, to_address, amount)
+    t_transactions_grouped do |transactions_grouped|
+      transactions_grouped[txid] = tx_hash
      end
     txid
   end
   
   def gettransaction(txid)
-    t_transactions[txid]
+    t_transactions_grouped[txid]
   end
   
   # Simlulate methods
@@ -163,7 +162,7 @@ class Wallet
   
   private
   
-  def t_transaction_hash(from_name, to_address, amount)
+  def t_transaction_grouped_hash(from_name, to_address, amount)
     txid = helper_random_txid
     
     tx_hash = {
@@ -238,11 +237,19 @@ class Wallet
     end
   end
 
-  def t_transactions(&block)
+  # def t_transactions(&block)
+  #   db.transaction do 
+  #     transactions = db[:transactions] || {}
+  #     yield(transactions) if block
+  #     db[:transactions] = transactions
+  #   end
+  # end
+
+  def t_transactions_grouped(&block)
     db.transaction do 
-      transactions = db[:transactions] || {}
-      yield(transactions) if block
-      db[:transactions] = transactions
+      transactions_grouped = db[:transactions_grouped] || {}
+      yield(transactions_grouped) if block
+      db[:transactions_grouped] = transactions_grouped
     end
   end
   
