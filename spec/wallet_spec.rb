@@ -29,6 +29,10 @@ describe Wallet do
       wallet.listaccounts.should == {"" => bg(0)}
     end
     
+    it 'listtransactions' do
+      wallet.listtransactions.should == []
+    end
+    
     describe 'methods do not create new accounts' do
       it 'getbalance' do
         wallet.getbalance("new-account")
@@ -63,6 +67,10 @@ describe Wallet do
 
     it 'listaccounts' do
       wallet.listaccounts == [["", bg(0)]]
+    end
+    
+    it 'listtransactions' do
+      wallet.listtransactions.should == []
     end
     
     it do
@@ -190,7 +198,7 @@ describe Wallet do
   end
   
   context "gettransaction" do
-    it do 
+    it 'sendfrom internal' do 
       wallet.helper_adjust_balance("A", bg(10))
       wallet.helper_set_confirmations(555)
       wallet.helper_set_time(999)
@@ -220,7 +228,7 @@ describe Wallet do
       }
     end
     
-    it 'with fee' do
+    it 'sendfrom internal with fee' do
       wallet.helper_adjust_balance("A", bg(10))
       wallet.helper_set_confirmations(555)
       wallet.helper_set_time(999)
@@ -252,7 +260,7 @@ describe Wallet do
       }
     end
 
-    it 'external' do
+    it 'sendfrom external' do
       wallet.helper_adjust_balance("A", bg(10))
       wallet.helper_set_confirmations(555)
       wallet.helper_set_time(999)
@@ -276,6 +284,25 @@ describe Wallet do
           }
         ]
       }
+    end
+  end
+  
+  context 'listtransactions' do
+    it 'incoming transaction' do
+      wallet.helper_set_confirmations(555)
+      wallet.helper_set_time(999)
+      wallet.helper_set_fee(bg(0.1))
+
+      txid = wallet.simulate_incoming_payment addressA, bg(8)
+      wallet.listtransactions.should == [{
+        "account" => "A",
+        "address" => addressA,
+        "category" => "receive",
+        "amount" => bg(8),
+        "confirmations" => 555,
+        "txid" => txid,
+        "time" => 999
+      }]
     end
   end
   
