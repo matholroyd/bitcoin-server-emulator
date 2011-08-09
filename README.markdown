@@ -136,10 +136,10 @@ Note that for the following the `[minconf=1]` and `[comment]` options are not im
     getnewaddress [account]
     move <fromaccount> <toaccount> <amount> [minconf=1] [comment]
     sendfrom <fromaccount> <tobitcoinaddress> <amount> [minconf=1] [comment] [comment-to]
+    listtransactions [account] [count=10]
 
 **To be implemented**
 
-    listtransactions [account] [count=10]
 
 **Not implemented**
 
