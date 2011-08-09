@@ -12,7 +12,7 @@ BitCoin transactions take on average ~10 minutes to be verified by the BitCoin n
 
 If it does change, we'll have to update this code. Please let me know if this happens!
 
-That said, considering the wide adoptance of the current open source project and hence its current API, with literally millions of dollars on the line, change is likely to be slow. The managers of the open source project would upset a lot of people if they changed the core methods of the API.  
+That said, hopefully change will be slow due to the wide adoptance of the current open source project and hence its current API, with literally millions of dollars on the line.
 
 As said above though, please send me a message (on GitHub) if the interface changes! 
 
@@ -140,6 +140,7 @@ Note that for the following the `[minconf=1]` and `[comment]` options are not im
 
 **To be implemented**
 
+*(none for the moment)*
 
 **Not implemented**
 
