@@ -213,8 +213,31 @@ describe Wallet do
           ]
         }
       end
+      
+      it do
+        wallet.listtransactions.should == [
+          {
+            "account" => "B",
+            "address" => addressB,
+            "category" => "receive",
+            "amount" => bg(3),
+            "confirmations" => 555,
+            "txid" => @txid,
+            "time" => 999
+          },
+          {
+            "account" => "A",
+            "address" => addressB,
+            "category" => "send",
+            "amount" => -bg(3),
+            "fee" => -bg(0),
+            "confirmations" => 555,
+            "txid" => @txid,
+            "time" => 999
+          }
+        ]
+      end
     end
-    
         
   end
 end
