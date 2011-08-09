@@ -96,16 +96,16 @@ class Wallet
       to = accounts[to_name]
       
       from.balance -= (amount + fee)
-      if to
+      if to_name
         to.balance += amount 
       end
     end
 
     txid = helper_random_txid
 
-    tx_hash = t_transaction_outgoing_hash(txid, from_name, to_address, amount)
+    tx_hashes = t_transaction_sendfrom_hashes(txid, from_name, to_address, amount)
     t_transactions do |transactions|
-      transactions << tx_hash
+      tx_hashes.each {|t| transactions.push(t)}
     end
     
     tx_hash = t_transaction_grouped_hash(txid, from_name, to_address, amount)
@@ -184,6 +184,37 @@ class Wallet
   end
   
   private
+  
+  def t_transaction_sendfrom_hashes(txid, account_name, to_address, amount)
+    to_name = t_addresses[to_address]
+    
+    result = []
+
+    if to_name
+      result << {
+        "account" => to_name,
+        "address" => to_address,
+        "category" => "receive",
+        "amount" => amount,
+        "confirmations" => t_confirmations,
+        "txid" => txid,
+        "time" => t_time
+      }
+    end
+
+    result << {
+      "account" => account_name,
+      "address" => to_address,
+      "category" => "send",
+      "amount" => -amount,
+      "fee" => -t_fee,
+      "confirmations" => t_confirmations,
+      "txid" => txid,
+      "time" => t_time
+    }
+    
+    result
+  end
   
   def t_transaction_outgoing_hash(txid, account_name, address, amount)
     {

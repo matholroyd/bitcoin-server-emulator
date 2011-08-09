@@ -1,11 +1,4 @@
-require File.dirname(__FILE__) + '/../wallet'
-
-BitCoinAddressRexExp = /^1[#{Wallet::Base58Chars}]{33}$/
-TestPath = File.dirname(__FILE__) + '/../bitcoin-wallet.cache.test'
-
-def bg(amount)
-  BigDecimal.new(amount.to_s)
-end
+require File.dirname(__FILE__) + '/spec_helper'
 
 describe Wallet do
   let(:wallet) { Wallet.new(TestPath).helper_reset }
@@ -138,216 +131,169 @@ describe Wallet do
     end
   end
   
-  context "move" do
-    it do
-      wallet.simulate_incoming_payment addressA, bg(8)
-      wallet.listaccounts.should == {"" => bg(0), "A" => bg(8)}
-      
-      wallet.move("A", "B", bg(3)).should == true
-      wallet.getbalance.     should == bg(8)
-      wallet.getbalance("A").should == bg(5)
-      wallet.getbalance("B").should == bg(3)
-      wallet.listaccounts.should == {"" => bg(0), "A" => bg(5), "B" => bg(3)}
-    end
-    
-    it 'creates accounts if they do not exist' do
-      wallet.listaccounts.should == {"" => bg(0)}
-
-      wallet.move("A", "B", bg(3)).should == true
-      wallet.getbalance.     should == bg(0)
-      wallet.getbalance("A").should == bg(-3)
-      wallet.getbalance("B").should == bg(3)
-      wallet.listaccounts.should == {"" => bg(0), "A" => bg(-3), "B" => bg(3)}
-    end
-  end
-  
   context "sendfrom" do
-    it do
-      wallet.simulate_incoming_payment addressA, bg(8)
-      wallet.listaccounts.should == {"" => bg(0), "A" => bg(8)}
-
-      wallet.sendfrom "A", addressB, bg(3)
-      wallet.getbalance.     should == bg(8)
-      wallet.getbalance("A").should == bg(5)
-      wallet.getbalance("B").should == bg(3)
-      wallet.listaccounts.should == {"" => bg(0), "A" => bg(5), "B" => bg(3)}
-    end
+    # it do
+    #   wallet.simulate_incoming_payment addressA, bg(8)
+    #   wallet.listaccounts.should == {"" => bg(0), "A" => bg(8)}
+    # 
+    #   wallet.sendfrom "A", addressB, bg(3)
+    #   wallet.getbalance.     should == bg(8)
+    #   wallet.getbalance("A").should == bg(5)
+    #   wallet.getbalance("B").should == bg(3)
+    #   wallet.listaccounts.should == {"" => bg(0), "A" => bg(5), "B" => bg(3)}
+    # end
     
-    it "with fee" do
-      wallet.simulate_incoming_payment addressA, bg(8)
-      wallet.listaccounts.should == {"" => bg(0), "A" => bg(8)}
-      wallet.helper_set_fee(bg(0.1))
-
-      wallet.sendfrom "A", addressB, bg(3)
-      wallet.getbalance.     should == bg(7.9)
-      wallet.getbalance("A").should == bg(4.9)
-      wallet.getbalance("B").should == bg(3)
-      wallet.listaccounts.should == {"" => bg(0), "A" => bg(4.9), "B" => bg(3)}
-    end
+    # it "with fee" do
+    #   wallet.simulate_incoming_payment addressA, bg(8)
+    #   wallet.listaccounts.should == {"" => bg(0), "A" => bg(8)}
+    #   wallet.helper_set_fee(bg(0.1))
+    # 
+    #   wallet.sendfrom "A", addressB, bg(3)
+    #   wallet.getbalance.     should == bg(7.9)
+    #   wallet.getbalance("A").should == bg(4.9)
+    #   wallet.getbalance("B").should == bg(3)
+    #   wallet.listaccounts.should == {"" => bg(0), "A" => bg(4.9), "B" => bg(3)}
+    # end
     
-    it "external" do
-      wallet.simulate_incoming_payment addressA, bg(8)
-      wallet.listaccounts.should == {"" => bg(0), "A" => bg(8)}
-      wallet.helper_set_fee(bg(0.1))
-
-      wallet.sendfrom "A", external_address, bg(3)
-      wallet.getbalance.     should == bg(4.9)
-      wallet.getbalance("A").should == bg(4.9)
-      wallet.listaccounts.should == {"" => bg(0), "A" => bg(4.9)}
-    end
+    # it "external" do
+    #   wallet.simulate_incoming_payment addressA, bg(8)
+    #   wallet.listaccounts.should == {"" => bg(0), "A" => bg(8)}
+    #   wallet.helper_set_fee(bg(0.1))
+    # 
+    #   wallet.sendfrom "A", external_address, bg(3)
+    #   wallet.getbalance.     should == bg(4.9)
+    #   wallet.getbalance("A").should == bg(4.9)
+    #   wallet.listaccounts.should == {"" => bg(0), "A" => bg(4.9)}
+    # end
   end
   
   context "gettransaction" do
-    it 'sendfrom internal' do 
-      wallet.helper_adjust_balance("A", bg(10))
-      wallet.helper_set_confirmations(555)
-      wallet.helper_set_time(999)
-
-      txid = wallet.sendfrom("A", addressB, bg(3))
-
-      wallet.gettransaction(txid).should == {
-        "amount" => bg(0),
-        "fee" => bg(0),
-        "confirmations" => 555,
-        "txid" => txid,
-        "time" => 999,
-        "details" => [
-          {
-            "account" => "A",
-            "address" => addressB,
-            "category" => "send",
-            "amount" => bg(-3)
-          },
-          {
-            "account" => "B",
-            "address" => addressB,
-            "category" => "receive",
-            "amount" => bg(3)
-          }
-        ]
-      }
-    end
+    # it 'sendfrom internal' do 
+    #   wallet.helper_adjust_balance("A", bg(10))
+    #   wallet.helper_set_confirmations(555)
+    #   wallet.helper_set_time(999)
+    # 
+    #   txid = wallet.sendfrom("A", addressB, bg(3))
+    # 
+    #   wallet.gettransaction(txid).should == {
+    #     "amount" => bg(0),
+    #     "fee" => bg(0),
+    #     "confirmations" => 555,
+    #     "txid" => txid,
+    #     "time" => 999,
+    #     "details" => [
+    #       {
+    #         "account" => "A",
+    #         "address" => addressB,
+    #         "category" => "send",
+    #         "amount" => bg(-3)
+    #       },
+    #       {
+    #         "account" => "B",
+    #         "address" => addressB,
+    #         "category" => "receive",
+    #         "amount" => bg(3)
+    #       }
+    #     ]
+    #   }
+    # end
     
-    it 'sendfrom internal with fee' do
-      wallet.helper_adjust_balance("A", bg(10))
-      wallet.helper_set_confirmations(555)
-      wallet.helper_set_time(999)
-      wallet.helper_set_fee(bg(0.1))
+    # it 'sendfrom internal with fee' do
+    #   wallet.helper_adjust_balance("A", bg(10))
+    #   wallet.helper_set_confirmations(555)
+    #   wallet.helper_set_time(999)
+    #   wallet.helper_set_fee(bg(0.1))
+    # 
+    #   txid = wallet.sendfrom("A", addressB, bg(3))
+    # 
+    #   wallet.gettransaction(txid).should == {
+    #     "amount" => bg(0),
+    #     "fee" => bg(-0.1),
+    #     "confirmations" => 555,
+    #     "txid" => txid,
+    #     "time" => 999,
+    #     "details" => [
+    #       {
+    #         "account" => "A",
+    #         "address" => addressB,
+    #         "category" => "send",
+    #         "amount" => bg(-3),
+    #         "fee" => bg(-0.1)
+    #       },
+    #       {
+    #         "account" => "B",
+    #         "address" => addressB,
+    #         "category" => "receive",
+    #         "amount" => bg(3)
+    #       }
+    #     ]
+    #   }
+    # end
 
-      txid = wallet.sendfrom("A", addressB, bg(3))
-
-      wallet.gettransaction(txid).should == {
-        "amount" => bg(0),
-        "fee" => bg(-0.1),
-        "confirmations" => 555,
-        "txid" => txid,
-        "time" => 999,
-        "details" => [
-          {
-            "account" => "A",
-            "address" => addressB,
-            "category" => "send",
-            "amount" => bg(-3),
-            "fee" => bg(-0.1)
-          },
-          {
-            "account" => "B",
-            "address" => addressB,
-            "category" => "receive",
-            "amount" => bg(3)
-          }
-        ]
-      }
-    end
-
-    it 'sendfrom external' do
-      wallet.helper_adjust_balance("A", bg(10))
-      wallet.helper_set_confirmations(555)
-      wallet.helper_set_time(999)
-      wallet.helper_set_fee(bg(0.1))
-
-      txid = wallet.sendfrom("A", external_address, bg(3))
-
-      wallet.gettransaction(txid).should == {
-        "amount" => bg(-3),
-        "fee" => bg(-0.1),
-        "confirmations" => 555,
-        "txid" => txid,
-        "time" => 999,
-        "details" => [
-          {
-            "account" => "A",
-            "address" => external_address,
-            "category" => "send",
-            "amount" => bg(-3),
-            "fee" => bg(-0.1)
-          }
-        ]
-      }
-    end
+    # it 'sendfrom external' do
+    #   wallet.helper_adjust_balance("A", bg(10))
+    #   wallet.helper_set_confirmations(555)
+    #   wallet.helper_set_time(999)
+    #   wallet.helper_set_fee(bg(0.1))
+    # 
+    #   txid = wallet.sendfrom("A", external_address, bg(3))
+    # 
+    #   wallet.gettransaction(txid).should == {
+    #     "amount" => bg(-3),
+    #     "fee" => bg(-0.1),
+    #     "confirmations" => 555,
+    #     "txid" => txid,
+    #     "time" => 999,
+    #     "details" => [
+    #       {
+    #         "account" => "A",
+    #         "address" => external_address,
+    #         "category" => "send",
+    #         "amount" => bg(-3),
+    #         "fee" => bg(-0.1)
+    #       }
+    #     ]
+    #   }
+    # end
   end
   
   context 'listtransactions' do
-    it 'move' do
-      wallet.helper_set_time(999)
-      wallet.move("A", "B", bg(3))
-      
-      wallet.listtransactions.should == [
-        {
-             "account" => "B",
-             "category" => "move",
-             "time" => 999,
-             "amount" => bg(3),
-             "otheraccount" => "A",
-             "comment" => ""
-         },
-         {
-             "account" => "A",
-             "category" => "move",
-             "time" => 999,
-             "amount" => -bg(3),
-             "otheraccount" => "B",
-             "comment" => ""
-         }
-      ]
-    end
+    # it 'incoming' do
+    #   wallet.helper_set_confirmations(555)
+    #   wallet.helper_set_time(999)
+    #   wallet.helper_set_fee(bg(0.1))
+    # 
+    #   txid = wallet.simulate_incoming_payment addressA, bg(8)
+    #   wallet.listtransactions.should == [{
+    #     "account" => "A",
+    #     "address" => addressA,
+    #     "category" => "receive",
+    #     "amount" => bg(8),
+    #     "confirmations" => 555,
+    #     "txid" => txid,
+    #     "time" => 999
+    #   }]
+    # end
     
-    it 'incoming' do
-      wallet.helper_set_confirmations(555)
-      wallet.helper_set_time(999)
-      wallet.helper_set_fee(bg(0.1))
-
-      txid = wallet.simulate_incoming_payment addressA, bg(8)
-      wallet.listtransactions.should == [{
-        "account" => "A",
-        "address" => addressA,
-        "category" => "receive",
-        "amount" => bg(8),
-        "confirmations" => 555,
-        "txid" => txid,
-        "time" => 999
-      }]
-    end
-    
-    it 'outgoing' do
-      wallet.helper_set_confirmations(555)
-      wallet.helper_set_time(999)
-      wallet.helper_set_fee(bg(0.1))
-
-      txid = wallet.helper_adjust_balance 'A', bg(10)
-      txid = wallet.sendfrom 'A', external_address, bg(2)
-      
-      wallet.listtransactions.should == [{
-        "account" => "A",
-        "address" => external_address,
-        "category" => "send",
-        "amount" => bg(-2),
-        "fee" => bg(-0.1),
-        "confirmations" => 555,
-        "txid" => txid,
-        "time" => 999
-      }]
-    end
+    # it 'outgoing' do
+    #   wallet.helper_set_confirmations(555)
+    #   wallet.helper_set_time(999)
+    #   wallet.helper_set_fee(bg(0.1))
+    # 
+    #   txid = wallet.helper_adjust_balance 'A', bg(10)
+    #   txid = wallet.sendfrom 'A', external_address, bg(2)
+    #   
+    #   wallet.listtransactions.should == [{
+    #     "account" => "A",
+    #     "address" => external_address,
+    #     "category" => "send",
+    #     "amount" => bg(-2),
+    #     "fee" => bg(-0.1),
+    #     "confirmations" => 555,
+    #     "txid" => txid,
+    #     "time" => 999
+    #   }]
+    # end
   end
   
   
