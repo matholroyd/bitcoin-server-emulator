@@ -138,6 +138,11 @@ class Wallet
       transactions << tx_hash
     end
     
+    tx_hash = t_transaction_grouped_hash(txid, nil, address, amount)
+    t_transactions_grouped do |transactions_grouped|
+      transactions_grouped[txid] = tx_hash
+     end
+    
     txid
   end
   
@@ -215,20 +220,7 @@ class Wallet
     
     result
   end
-  
-  def t_transaction_outgoing_hash(txid, account_name, address, amount)
-    {
-      "account" => account_name,
-      "address" => address,
-      "category" => "send",
-      "amount" => -amount,
-      "fee" => -t_fee,
-      "confirmations" => t_confirmations,
-      "txid" => txid,
-      "time" => t_time
-    }
-  end
-  
+    
   def t_transaction_incoming_hash(txid, address, amount)
     {
       "account" => t_addresses[address],
@@ -261,9 +253,42 @@ class Wallet
   end
   
   def t_transaction_grouped_hash(txid, from_name, to_address, amount)
+    to_name = t_addresses[to_address]
+    
+    if from_name.nil?
+      t_transaction_grouped_from_external_hash(txid, to_address, amount)
+    elsif to_name.nil?
+      t_transaction_grouped_to_external_hash(txid, from_name, to_address, amount)
+    else
+      t_transaction_grouped_internal_hash(txid, from_name, to_address, amount)
+    end
+  end
+  
+  def t_transaction_grouped_from_external_hash(txid, to_address, amount)
+    to_name = t_addresses[to_address]
+
+    {
+      "amount" => amount,
+      "confirmations" => t_confirmations,
+      "txid" => txid,
+      "time" => t_time,
+      "details" => [
+        {
+          "account" => to_name,
+          "address" => to_address,
+          "category" => "receive",
+          "amount" => amount
+        }
+      ]
+    }
+  end
+
+  def t_transaction_grouped_internal_hash(txid, from_name, to_address, amount)
+    to_name = t_addresses[to_address]
+
     tx_hash = {
-      "amount" => -amount,
-      "fee" => -t_fee,
+      "amount" => bg(0),
+      "fee" => t_fee_for_transction_group,
       "confirmations" => t_confirmations,
       "txid" => txid,
       "time" => t_time,
@@ -273,6 +298,12 @@ class Wallet
           "address" => to_address,
           "category" => "send",
           "amount" => -amount
+        },
+        {
+          "account" => to_name,
+          "address" => to_address,
+          "category" => "receive",
+          "amount" => amount
         }
       ]
     }
@@ -280,24 +311,33 @@ class Wallet
     if t_fee > bg(0)
       tx_hash['details'].first['fee'] = -t_fee
     end
-
-    to_name = t_addresses[to_address]
-    if to_name
-      t_accounts do |accounts|
-        to = accounts[to_name]
-      
-        tx_hash['amount'] = bg(0)
-        tx_hash['details'] << {
-          "account" => to_name,
-          "address" => to_address,
-          "category" => "receive",
-          "amount" => amount
-        }
-      end
-    end
     
-    tx_hash
+    tx_hash    
   end
+  
+  def t_transaction_grouped_to_external_hash(txid, from_name, to_address, amount)
+    {
+      "amount" => -amount,
+      "fee" => t_fee_for_transction_group,
+      "confirmations" => t_confirmations,
+      "txid" => txid,
+      "time" => t_time,
+      "details" => [
+        {
+          "account" => from_name,
+          "address" => to_address,
+          "category" => "send",
+          "amount" => -amount,
+          "fee" => t_fee_for_transction_group
+        }
+      ]
+    }
+  end
+  
+  def t_fee_for_transction_group
+    t_fee > bg(0) ? -t_fee : bg(0)
+  end
+
   
   def random_char(chars)
     chars[rand(chars.length)]

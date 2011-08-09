@@ -80,7 +80,7 @@ describe Wallet do
       it do
         wallet.gettransaction(@txid).should == {
           "amount" => bg(-3),
-          "fee" => -bg(0),
+          "fee" => bg(0),
           "confirmations" => 555,
           "txid" => @txid,
           "time" => 999,
@@ -89,7 +89,8 @@ describe Wallet do
               "account" => "A",
               "address" => external_address,
               "category" => "send",
-              "amount" => bg(-3)
+              "amount" => bg(-3),
+              "fee" => bg(0)
             }
           ]
         }
@@ -101,7 +102,7 @@ describe Wallet do
           "address" => external_address,
           "category" => "send",
           "amount" => -bg(3),
-          "fee" => -bg(0),
+          "fee" => bg(0),
           "confirmations" => 555,
           "txid" => @txid,
           "time" => 999
@@ -230,7 +231,7 @@ describe Wallet do
             "address" => addressB,
             "category" => "send",
             "amount" => -bg(3),
-            "fee" => -bg(0),
+            "fee" => bg(0),
             "confirmations" => 555,
             "txid" => @txid,
             "time" => 999
