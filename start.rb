@@ -13,10 +13,11 @@ get '/:name' do |db_name|
 end
 
 get '/:name/adjust_balance' do |db_name|
-  wallet(db_name).helper_adjust_balance(
-    params[:account], 
-    wallet(db_name).getbalance(params[:account]).to_i + params[:amount].to_i
+  wallet(db_name).simulate_incoming_payment(
+    wallet(db_name).getnewaddress(params[:account]),
+    params[:amount].to_i
   )
+
   redirect "/#{db_name}"
 end
 
