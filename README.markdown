@@ -37,9 +37,11 @@ Or if you prefer to use Shotgun:
     
 # Using
 
-To interact with the running server, you'll need to send POST requests to the bitcoin server emulator's URL.  By default that is `http://localhost:4567`.  
+To interact with the running server, you'll need to send POST requests to the bitcoin server emulator's URL.  If you run the server via the ruby command, the default URL is `http://localhost:4567/[your-app-name]`, where `your-app-name` should be the name of your app.  
 
-The interface is designed to be a direct replica of what the official open source bitcoin server does, hence refer to that to learn what the commands are and what they should be returning.  
+Note for each `your-app-name`, a separate database, persistent database is used. For instance, if you had a rails app called `alpaca-socks` that uses a bitcoin server to do payments, and you want to check it working in both development and testing, you could use the URLS  `http://localhost:4567/alpaca-socks-development` and  `http://localhost:4567/alpaca-socks-test`.  That way, you can play around with your app in development and the state will be remembered, and then if you run tests, your tests will not clobber the development data.
+
+The interface of the emulator is designed to be a direct replica of what the official open source bitcoin server does, hence refer to that to learn what the commands are and what they should be returning.  
 
 As a reference, the two pages you are mostly likely interested in are:
 
