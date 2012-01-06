@@ -83,8 +83,8 @@ class Wallet
     true
   end
   
-  def listtransactions
-    t_transactions
+  def listtransactions(account_name = nil, count = 10)
+    t_transactions.last(count).reverse
   end
 
   def sendfrom(from_name, to_address, amount)
@@ -337,7 +337,6 @@ class Wallet
   def t_fee_for_transction_group
     t_fee > bg(0) ? -t_fee : bg(0)
   end
-
   
   def random_char(chars)
     chars[rand(chars.length)]
