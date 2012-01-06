@@ -1,0 +1,20 @@
+<html>
+<head>
+</head>
+<body>
+    <h1>Bitcoin Server Emulator</h1>
+    <p>Use it to speed up testing of a 3rd-party app interacting with the offical bitcoin server.</p>
+    <p>To use this server, your 3rd-party app needs to send JSON RPC POST requests to this server.   
+    </p>
+    <p>The URL you should send requests to is <strong><%= request.url %><em>your-app-name</em></strong>.
+    </p>
+    <p>Note that for each unique <strong>your-app-name</strong>, a separate database is persisted. That way you can use the same bitcoin sever emulator for development and testing, and if you give a different name for development versus when you are testing, testing will not clobber your development data.
+    </p>
+    <h2>Detected databases:</h2>
+    <ul>
+      <% @dbs.each do |db_name| %>
+        <li><a href="<%= "/#{db_name}" %>"><%= db_name%></a></li>
+      <% end %>
+    </ul>
+</body>
+</html>

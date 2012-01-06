@@ -5,6 +5,13 @@ require './wallet'
   
 set :views, File.dirname(__FILE__) + '/view'
 
+get '/' do
+  ensure_tmp
+  @dbs = Dir['tmp/*.cache'].collect {|p| p.sub(/^tmp\//, '').sub(/\.cache$/, '')}
+  
+  erb :'index.html'
+end
+
 get '/:name' do |db_name|
   @db_name = db_name
   @accounts = wallet(db_name).listaccounts
@@ -45,11 +52,18 @@ def process_jsonrpc(db_name = 'bitcoin-wallet')
   result.to_json
 end
 
-def wallet(name)
-  dir = File.dirname(__FILE__) + "/tmp"
-  `mkdir #{dir}` unless Dir.exists?(dir)
+def tmp_dir
+  File.dirname(__FILE__) + "/tmp"
+end
 
-  path = "#{dir}/#{name}.cache"
+def ensure_tmp
+  `mkdir #{dir}` unless Dir.exists?(tmp_dir)
+end
+
+def wallet(name)
+  ensure_tmp
+  
+  path = "#{tmp_dir}/#{name}.cache"
   Wallet.new(path)
 end
 
