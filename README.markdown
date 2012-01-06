@@ -39,7 +39,7 @@ Or if you prefer to use Shotgun:
 
 To interact with the running server, you'll need to send POST requests to the bitcoin server emulator's URL.  If you run the server via the ruby command, the default URL is `http://localhost:4567/[your-app-name]`, where `your-app-name` should be the name of your app.  
 
-Note for each `your-app-name`, a separate database, persistent database is used. For instance, if you had a rails app called `alpaca-socks` that uses a bitcoin server to do payments, and you want to check it working in both development and testing, you could use the URLS  `http://localhost:4567/alpaca-socks-development` and  `http://localhost:4567/alpaca-socks-test`.  That way, you can play around with your app in development and the state will be remembered, and then if you run tests, your tests will not clobber the development data.
+Note for each `your-app-name`, a separate, persistent database is used. For instance, if you had a rails app called **alpaca-socks** that uses a bitcoin server to do payments, and you want to check it working in both development and testing, you could use the URLs  `http://localhost:4567/alpaca-socks-development` and  `http://localhost:4567/alpaca-socks-test`.  That way, you can play around with your app in development and the state will be remembered, and then if you run tests, your tests will not clobber the development data.
 
 The interface of the emulator is designed to be a direct replica of what the official open source bitcoin server does, hence refer to that to learn what the commands are and what they should be returning.  
 
@@ -55,8 +55,8 @@ Below is a code snippet from the [API reference page](https://en.bitcoin.it/wiki
         gem install rest-client
  
     Usage:
-        h = ServiceProxy.new('http://localhost:4567')
-        puts h.getbalance.call 'accname'
+        h = ServiceProxy.new('http://localhost:4567/alpaca-socks-development')
+        puts h.getbalance.call 'store-balance'
     =end
     require 'json'
     require 'rest_client'
