@@ -14,7 +14,7 @@
         <% @accounts.each do |account| %>
           <tr>
             <th><%= account[0] %></th>
-            <td><%= account[1] %></td>
+            <td><%= account[1].to_s %></td>
             <td><a href="/<%= @db_name %>/adjust_balance?amount=10&account=<%= account[0] %>">Add 10.0 BitCoins</a></td>
           </tr>
         <% end %>

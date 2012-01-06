@@ -9,7 +9,7 @@ get '/:name' do |db_name|
   @db_name = db_name
   @accounts = wallet(db_name).listaccounts
   
-  erb :'index.html'
+  erb :'db.html'
 end
 
 get '/:name/adjust_balance' do |db_name|
