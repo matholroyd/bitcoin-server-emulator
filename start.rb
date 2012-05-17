@@ -57,7 +57,7 @@ def tmp_dir
 end
 
 def ensure_tmp
-  `mkdir #{dir}` unless Dir.exists?(tmp_dir)
+  `mkdir #{tmp_dir}` unless Dir.exists?(tmp_dir)
 end
 
 def wallet(name)
